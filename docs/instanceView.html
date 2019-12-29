@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>InstanceView</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="data.js"></script>
+    <style>
+        :root {
+            --colorA : #4a223f; /* this color is dynamic set by javascript */
+            --colorB : #aedbbb; /* this color is dynamic set by javascript */
+        }
+
+        .dynamicTable {
+        	border-collapse: collapse;
+        }
+
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        .dynamicTable th {
+        	border-style : solid;
+        }
+
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .dynamicTable td {
+        	border-style : solid;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <table id="dynamicTable" class="dynamicTable">
+        </table>
+    </main>
+    <script type="text/javascript">
+    createTableHeaderRowHtml();
+    createTableDataRowHtml();
+
+    /**
+     * tableのthタグを連想配列データから生成する
+     **/
+    function createTableHeaderRowHtml() {
+        // インスタンス名列定義までは固定定義
+        var thHtml = '<thead><tr><th>インスタンス名</th>';
+console.log(Object.keys(instancesArray[Object.keys(instancesArray)[0]]));
+        // 2次元連想配列の内部配列のキー名を繰り返し取得する
+        for (internalArrayKey in instancesArray[Object.keys(instancesArray)[0]]) {
+        	// thタグを生成する
+            thHtml = thHtml + '<th>' + internalArrayKey + '</th>';
+        }
+        // trの閉じタグを追加
+        var thHtml = thHtml + '</thead></tr>';
+        document.getElementById('dynamicTable').insertAdjacentHTML(
+            'afterbegin', thHtml);
+    }
+
+    /**
+     * tableのtbodyタグを連想配列データから生成する
+     **/
+    function createTableDataRowHtml() {
+        var tbodyHtml = '<tbody>';
+        for (outerArrayKey in instancesArray) {
+            tbodyHtml = tbodyHtml + '<tr><td>' + outerArrayKey + '</td>';
+            for (internalArrayKey in instancesArray[outerArrayKey]) {
+                console.log('[Array dataName]' + internalArrayKey);
+                console.log('[Array dataValue]' + instancesArray[outerArrayKey][internalArrayKey]);
+                tbodyHtml = tbodyHtml + '<td>' + instancesArray[outerArrayKey][internalArrayKey] + '</td>';
+            }
+            tbodyHtml = tbodyHtml + '</tr>';
+        }
+        // trの閉じタグを追加
+        var tbodyHtml = tbodyHtml + '</tbody></tr>';
+        document.getElementById('dynamicTable').insertAdjacentHTML(
+            'afterbegin', tbodyHtml);
+
+    }
+    </script>
+</body>
+
+</html>
