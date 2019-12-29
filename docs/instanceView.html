@@ -30,24 +30,89 @@
 
 <body>
     <main>
+        <div class=""></div>
         <table id="dynamicTable" class="dynamicTable">
         </table>
     </main>
     <script type="text/javascript">
-    createTableHeaderRowHtml();
-    createTableDataRowHtml();
+    localStorage.setItem('tableKeysForDispOrder', ['環境予約者', '起動時刻', 'DB向き先']);
+    var tableKeysForDispOrder = decideTableKeysDispOrder();
+
+    //debug
+    for (index in tableKeysForDispOrder) {
+        console.log('[result val] ' + tableKeysForDispOrder[index]);
+    }
+
+    createTableHeaderRowHtml(tableKeysForDispOrder);
+    createTableDataRowHtml(tableKeysForDispOrder);
+
+    /**
+     * 
+     */
+    function decideTableKeysDispOrder() {
+        var locStrgString = localStorage.getItem('tableKeysForDispOrder');
+        console.log('[decideTableKeysDispOrder] localStorage getResult : ' + locStrgString);
+        // ローカルストレージに値が有る場合
+        if (locStrgString) {
+            // カンマ区切り配列に編集する
+            locStrgArray = locStrgString.split(',');
+            // ローカルストレージに値が無い場合
+        } else {
+            locStrgArray = '';
+        }
+
+
+        // localStorageの値が妥当な場合
+        if (isCorrectTableKeys(locStrgArray)) {
+            // ローカルストレージの値を返す
+            return locStrgArray;
+        }
+        // localStorageの値が妥当でない場合
+        else {
+            // 現在の値からキー値を返す
+            return Object.keys(instancesArray[Object.keys(instancesArray)[0]]);
+        }
+    }
+
+    /**
+     * テーブルキー配列が妥当か現在の値を元に判定する
+     */
+    function isCorrectTableKeys(tableKeysForDispOrder) {
+        // 現在のキー配列を取得する
+        var currentKeys = instancesArray[Object.keys(instancesArray)[0]];
+        // 妥当と判定した回数
+        var correctCount = 0;
+
+        // ローカルストレージから取得した配列を元に繰り返し処理
+        for (index in tableKeysForDispOrder) {
+            // ローカルストレージのキー値が現在のキー配列に存在する場合
+            if (tableKeysForDispOrder[index] in currentKeys) {
+                // チェック状態管理用フラグを1つ立てる
+                ++correctCount;
+            } else {
+                console.log('[isCorrectTableKeys] false : A');
+                return false;
+            }
+        }
+        // 妥当と判定した回数が現在のキー配列長と一致しない場合
+        if (Object.keys(currentKeys).length != correctCount) {
+            console.log('[isCorrectTableKeys] false : B');
+            return false;
+        }
+        console.log('[isCorrectTableKeys] true');
+        return true;
+    }
 
     /**
      * tableのthタグを連想配列データから生成する
-     **/
-    function createTableHeaderRowHtml() {
+     */
+    function createTableHeaderRowHtml(tableKeysForDispOrder) {
         // インスタンス名列定義までは固定定義
-        var thHtml = '<thead><tr><th>インスタンス名</th>';
-console.log(Object.keys(instancesArray[Object.keys(instancesArray)[0]]));
+        var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
         // 2次元連想配列の内部配列のキー名を繰り返し取得する
-        for (internalArrayKey in instancesArray[Object.keys(instancesArray)[0]]) {
-        	// thタグを生成する
-            thHtml = thHtml + '<th>' + internalArrayKey + '</th>';
+        for (index in tableKeysForDispOrder) {
+            // thタグを生成する
+            thHtml = thHtml + '<th>' + tableKeysForDispOrder[index] + '</th>';
         }
         // trの閉じタグを追加
         var thHtml = thHtml + '</thead></tr>';
@@ -58,21 +123,22 @@ console.log(Object.keys(instancesArray[Object.keys(instancesArray)[0]]));
     /**
      * tableのtbodyタグを連想配列データから生成する
      **/
-    function createTableDataRowHtml() {
+    function createTableDataRowHtml(tableKeysForDispOrder) {
         var tbodyHtml = '<tbody>';
+        var no = 1;
         for (outerArrayKey in instancesArray) {
-            tbodyHtml = tbodyHtml + '<tr><td>' + outerArrayKey + '</td>';
-            for (internalArrayKey in instancesArray[outerArrayKey]) {
-                console.log('[Array dataName]' + internalArrayKey);
-                console.log('[Array dataValue]' + instancesArray[outerArrayKey][internalArrayKey]);
-                tbodyHtml = tbodyHtml + '<td>' + instancesArray[outerArrayKey][internalArrayKey] + '</td>';
+            // Noとインスタンス名列のtdタグを生成
+            tbodyHtml = tbodyHtml + '<tr><td>' + no++ + '</td><td>' + outerArrayKey + '</td>';
+            for (internalArrayKey in tableKeysForDispOrder) {
+                // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
+                tbodyHtml = tbodyHtml + '<td>' + instancesArray[outerArrayKey][tableKeysForDispOrder[internalArrayKey]] + '</td>';
             }
             tbodyHtml = tbodyHtml + '</tr>';
         }
         // trの閉じタグを追加
         var tbodyHtml = tbodyHtml + '</tbody></tr>';
         document.getElementById('dynamicTable').insertAdjacentHTML(
-            'afterbegin', tbodyHtml);
+            'beforeend', tbodyHtml);
 
     }
     </script>
