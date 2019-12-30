@@ -13,22 +13,27 @@
         }
 
         .dynamicTable {
-        	border-collapse: collapse;
+            border-collapse: collapse;
         }
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .dynamicTable th {
-        	border-style : solid;
+            border-style : solid;
         }
 
         /* 動的テーブルの子孫tdタグのスタイル指定 */
         .dynamicTable td {
-        	border-style : solid;
+            border-style : solid;
         }
 
          /* until for movableConlumn.js */
          .tg_dbcl {
-	        background : var(--colorB);
+            background : var(--colorB);
+         }
+
+         .rightUpCenter {
+            /* TODO：隣接ノードを薄くしつつ色付け */
+            background : var(--colorB);
          }
 
     </style>
@@ -57,8 +62,9 @@
         if (locStrgString) {
             // カンマ区切り配列に編集する
             locStrgArray = locStrgString.split(',');
-            // ローカルストレージに値が無い場合
-        } else {
+        }
+        // ローカルストレージに値が無い場合
+        else {
             locStrgArray = '';
         }
 
@@ -107,13 +113,13 @@
      * tableのthタグを連想配列データから生成する
      */
     function createTableHeaderRowHtml(tableKeysForDispOrder) {
-    	var index_tblKysFDspOrdr = 0;
+        var index_tblKysFDspOrdr = 0;
         // インスタンス名列定義までは固定定義
         var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
         // 2次元連想配列の内部配列のキー名を繰り返し取得する
         for (index in tableKeysForDispOrder) {
             // thタグを生成する
-            thHtml = thHtml + '<th class="moveableColumn" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ +  '">' + tableKeysForDispOrder[index] + '</th>';
+            thHtml = thHtml + '<th class="moveableColumn" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + tableKeysForDispOrder[index] + '</th>';
         }
         // trの閉じタグを追加
         var thHtml = thHtml + '</thead></tr>';
@@ -125,24 +131,37 @@
      * tableのtbodyタグを連想配列データから生成する
      **/
     function createTableDataRowHtml(tableKeysForDispOrder) {
+        var tdPosition = new Object();
+        tdPosition.row = 1;
+        tdPosition.column = 0;
         var tbodyHtml = '<tbody>';
         var no = 1;
+
         for (outerArrayKey in instancesArray) {
             // Noとインスタンス名列のtdタグを生成
-            tbodyHtml = tbodyHtml + '<tr><td>' + no++ + '</td><td>' + outerArrayKey + '</td>';
+            tbodyHtml = tbodyHtml + '<tr><td id="' + getNextColumnId(tdPosition) + '">' + no++ + '</td><td id="' + getNextColumnId(tdPosition) + '">' + outerArrayKey + '</td>';
             for (internalArrayKey in tableKeysForDispOrder) {
                 // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
-                tbodyHtml = tbodyHtml + '<td>' + instancesArray[outerArrayKey][tableKeysForDispOrder[internalArrayKey]] + '</td>';
+                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '">' + instancesArray[outerArrayKey][tableKeysForDispOrder[internalArrayKey]] + '</td>';
             }
             tbodyHtml = tbodyHtml + '</tr>';
+            // 行の位置をインクリメント
+            tdPosition.row++;
+            // 列の位置をリセット
+            tdPosition.column = 0;
         }
         // trの閉じタグを追加
         var tbodyHtml = tbodyHtml + '</tbody></tr>';
         document.getElementById('dynamicTable').insertAdjacentHTML(
             'beforeend', tbodyHtml);
     }
+
+    function getNextColumnId(tdPosition) {
+        return tdPosition.row + ':' + ++tdPosition.column;
+    }
     </script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
+    <script type="text/javascript" src="js/rightUpCross.js"></script>
 </body>
 
 </html>

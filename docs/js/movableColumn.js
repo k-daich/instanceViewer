@@ -1,7 +1,15 @@
+/**
+ * メイン
+ */
 // ダブルクリックされた要素を格納する変数
 var dbclcked_element;
+// 主となるイベントリスナーの登録
 moveColumnEventListenr();
 
+
+/**
+ * 以降、ファンクション
+ */
 /**
  * 可動な列を実装するためのイベントリスナーを付与する
  */
@@ -9,7 +17,7 @@ function moveColumnEventListenr() {
     // イベントリスナー付与対象の要素を取得する
     var elements = document.getElementsByClassName("moveableColumn");
 
-    // マウスが要素内で押されたとき、又はタッチされたとき発火
+    // マウスが要素内で押されたとき発火
     for (var i = 0; i < elements.length; i++) {
         elements[i].addEventListener("dblclick", dblclicked, false);
     }
@@ -77,6 +85,6 @@ function arrayContent(array) {
 /**
  * ログUtil
  */
-function logging(methodName, message) {
-    console.log('[' + methodName + '] ' + message);
+function logging(processName, message) {
+    console.log('[' + processName + '] ' + message);
 }
