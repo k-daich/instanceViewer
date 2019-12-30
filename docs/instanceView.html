@@ -5,7 +5,7 @@
     <title>InstanceView</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
     <style>
         :root {
             --colorA : #4a223f; /* this color is dynamic set by javascript */
@@ -25,6 +25,12 @@
         .dynamicTable td {
         	border-style : solid;
         }
+
+         /* until for movableConlumn.js */
+         .tg_dbcl {
+	        background : var(--colorB);
+         }
+
     </style>
 </head>
 
@@ -35,13 +41,8 @@
         </table>
     </main>
     <script type="text/javascript">
-    localStorage.setItem('tableKeysForDispOrder', ['環境予約者', '起動時刻', 'DB向き先']);
+    // localStorage.setItem('tableKeysForDispOrder', ['起動時刻', 'DB向き先', '環境予約者']);
     var tableKeysForDispOrder = decideTableKeysDispOrder();
-
-    //debug
-    for (index in tableKeysForDispOrder) {
-        console.log('[result val] ' + tableKeysForDispOrder[index]);
-    }
 
     createTableHeaderRowHtml(tableKeysForDispOrder);
     createTableDataRowHtml(tableKeysForDispOrder);
@@ -60,7 +61,6 @@
         } else {
             locStrgArray = '';
         }
-
 
         // localStorageの値が妥当な場合
         if (isCorrectTableKeys(locStrgArray)) {
@@ -107,12 +107,13 @@
      * tableのthタグを連想配列データから生成する
      */
     function createTableHeaderRowHtml(tableKeysForDispOrder) {
+    	var index_tblKysFDspOrdr = 0;
         // インスタンス名列定義までは固定定義
         var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
         // 2次元連想配列の内部配列のキー名を繰り返し取得する
         for (index in tableKeysForDispOrder) {
             // thタグを生成する
-            thHtml = thHtml + '<th>' + tableKeysForDispOrder[index] + '</th>';
+            thHtml = thHtml + '<th class="moveableColumn" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ +  '">' + tableKeysForDispOrder[index] + '</th>';
         }
         // trの閉じタグを追加
         var thHtml = thHtml + '</thead></tr>';
@@ -139,9 +140,9 @@
         var tbodyHtml = tbodyHtml + '</tbody></tr>';
         document.getElementById('dynamicTable').insertAdjacentHTML(
             'beforeend', tbodyHtml);
-
     }
     </script>
+    <script type="text/javascript" src="js/movableColumn.js"></script>
 </body>
 
 </html>
