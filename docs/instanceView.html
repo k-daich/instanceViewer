@@ -5,37 +5,48 @@
     <title>InstanceView</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/movableColumn.css">
+    <link rel="stylesheet" type="text/css" href="css/lightUpCross.css">
     <script type="text/javascript" src="js/data.js"></script>
     <style>
         :root {
-            --colorA : #4a223f; /* this color is dynamic set by javascript */
-            --colorB : #aedbbb; /* this color is dynamic set by javascript */
+            --baseColor : #363636; /* this color is dynamic set by javascript */
+            --baseColor_bg : #dddddd; /* this color is dynamic set by javascript */
+            --rightUpColor : #aaeedd; /* this color is dynamic set by javascript */
+        }
+
+        html {
+            color : var(--baseColor);
+            background : var(--baseColor_bg);
         }
 
         .dynamicTable {
-            border-collapse: collapse;
+            border-collapse:separate;
+            border-spacing: 3px;
+            width: 100%;
+        }
+
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .dynamicTable th, .dynamicTable td {
+            border-style: solid;
+            border-radius: 3px;
+            text-align: center;
+            padding: 3px 0;
         }
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .dynamicTable th {
-            border-style : solid;
-        }
+            background-color: #c79852;
+            color: white;
+            border:solid 1px #927141;
+        }  
 
         /* 動的テーブルの子孫tdタグのスタイル指定 */
-        .dynamicTable td {
-            border-style : solid;
+        .dynamicTable td{
+            background-color: #e4d4bc;
+            border:solid 1px #af9d85;
         }
-
-         /* until for movableConlumn.js */
-         .tg_dbcl {
-            background : var(--colorB);
-         }
-
-         .lightUpCenter {
-            /* TODO：隣接ノードを薄くしつつ色付け */
-            background : var(--colorB);
-         }
-
     </style>
 </head>
 
@@ -75,8 +86,11 @@
         }
         // localStorageの値が妥当でない場合
         else {
-            // 現在の値からキー値を返す
-            return Object.keys(instancesArray[Object.keys(instancesArray)[0]]);
+            // 現在のデータ値からキー値を取得する
+            var tableKeysForDispOrder_current = Object.keys(instancesArray[Object.keys(instancesArray)[0]]);
+            // ローカルストレージを更新する
+            localStorage.setItem('tableKeysForDispOrder', tableKeysForDispOrder_current);
+            return tableKeysForDispOrder_current;
         }
     }
 

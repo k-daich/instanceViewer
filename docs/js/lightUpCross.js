@@ -57,7 +57,7 @@ function lightUpAdjacent(column, row) {
     // 繰り返すごとにライトアップ対象距離をインクリメントする
     for (var distance = 1, interval = 1; ++interval;) {
         if (interval == 5) {
-            sleep(1 * interval, function() {
+            sleep(500 * interval, function() {
                 // 距離5以降の隣接データは一括で同一色にライトアップする
                 logging('lightUp', 'TODO:距離5以降のライトアップ処理実装');
             });
@@ -66,7 +66,7 @@ function lightUpAdjacent(column, row) {
         } else {
             // 2秒単位に待機してライトアップ処理を実施する
             // ※callback処理以外はsleep非同期で処理が続行するので注意すること
-            sleep(1 * interval, function() {
+            sleep(500 * interval, function() {
                 if (leftContinueFlg) {
                     var targetEle = document.getElementById(row + ':' + (column - distance));
                     if (targetEle) {
@@ -109,27 +109,17 @@ function lightUpAdjacent(column, row) {
 /**
  * 指定した秒だけ待機する
  */
-function sleep(waitSec, callbackFunc) {
-
-    // 経過時間（秒）
-    var spanedSec = 0;
+function sleep(milisec, callbackFunc) {
 
     // 1秒間隔で無名関数を実行
     var id = setInterval(function() {
-
-        spanedSec++;
-
-        // 経過時間 >= 待機時間の場合、待機終了。
-        if (spanedSec >= waitSec) {
-
             // タイマー停止
             clearInterval(id);
 
             // 完了時、コールバック関数を実行
             if (callbackFunc) callbackFunc();
-        }
-    }, 1000);
-
+        },
+        milisec);
 }
 
 /**
