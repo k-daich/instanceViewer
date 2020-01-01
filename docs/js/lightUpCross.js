@@ -43,6 +43,9 @@ function createPosition(id) {
     return position;
 }
 
+/**
+ * 指定した位置の隣接データをライトアップする
+ */
 function lightUpAdjacent(column, row) {
     // 左方のライトアップ続行フラグ
     var leftContinueFlg = true;
@@ -52,14 +55,18 @@ function lightUpAdjacent(column, row) {
     var upperContinueFlg = true;
     // 下方のライトアップ続行フラグ
     var belowContinueFlg = true;
+    // だんだんと色づけるようにエフェクトを実施する隣接数
+    var gettingLightUpAmount = 3;
 
     // 上下左右に隣接した4データをライトアップ。それ以降の隣接データは同一色で一括ライトアップする
     // 繰り返すごとにライトアップ対象距離をインクリメントする
     for (var distance = 1, interval = 1; ++interval;) {
-        if (interval == 5) {
+        if (interval == gettingLightUpAmount) {
             sleep(500 * interval, function() {
-                // 距離5以降の隣接データは一括で同一色にライトアップする
-                logging('lightUp', 'TODO:距離5以降のライトアップ処理実装');
+                // 列を一括ライトアップする
+                lightUpColumn(column);
+                // 行を一括ライトアップする
+                lightUpRow(row);
             });
             // ライトアップの処理終了
             break;
@@ -115,11 +122,44 @@ function sleep(milisec, callbackFunc) {
     var id = setInterval(function() {
             // タイマー停止
             clearInterval(id);
-
             // 完了時、コールバック関数を実行
             if (callbackFunc) callbackFunc();
         },
         milisec);
+}
+
+/**
+ * 指定した列をライトアップする
+ */
+function lightUpColumn(column) {
+    var targetId = "lightUp_col_" + column;
+    // 既にライトアップされていた場合
+    if (document.getElementById(targetId)) {
+        // 何もしない
+        logging('lightUpColumn', 'already exist id : ' + targetId);
+    } else {
+        // 列をライトアップするためのstyleタグを追加する
+        logging('lightUpColumn', 'adding id : ' + targetId);
+        document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
+            '<style id="' + targetId + '">tbody td:nth-of-type(' + column + ') { background: var(--rightUpColor) !important;}</style>');
+    }
+}
+
+/**
+ * 指定した列をライトアップする
+ */
+function lightUpRow(row) {
+    var targetId = "lightUp_row_" + row;
+    // 既にライトアップされていた場合
+    if (document.getElementById(targetId)) {
+        // 何もしない
+        logging('lightUpRow', 'already exist id : ' + targetId);
+    } else {
+        // 列をライトアップするためのstyleタグを追加する
+        logging('lightUpRow', 'adding id : ' + targetId);
+        document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
+            '<style id="' + targetId + '">tbody tr:nth-of-type(' + row + ') { background: var(--rightUpColor) !important;}</style>');
+    }
 }
 
 /**

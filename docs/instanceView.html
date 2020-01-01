@@ -5,49 +5,61 @@
     <title>InstanceView</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="js/data.js"></script>
     <link rel="stylesheet" type="text/css" href="css/movableColumn.css">
     <link rel="stylesheet" type="text/css" href="css/lightUpCross.css">
-    <script type="text/javascript" src="js/data.js"></script>
     <style>
         :root {
-            --baseColor : #363636; /* this color is dynamic set by javascript */
-            --baseColor_bg : #dddddd; /* this color is dynamic set by javascript */
-            --rightUpColor : #aaeedd; /* this color is dynamic set by javascript */
-        }
+        --baseColor: #363636;
+        /* this color is dynamic set by javascript */
+        --baseColor_bg: #dddddd;
+        /* this color is dynamic set by javascript */
+        --rightUpColor: #e6b2c0;
+        /* this color is dynamic set by javascript */
+        --testVariable: 5;
+    }
 
-        html {
-            color : var(--baseColor);
-            background : var(--baseColor_bg);
-        }
+    html {
+        color: var(--baseColor);
+        background: var(--baseColor_bg);
+    }
 
-        .dynamicTable {
-            border-collapse:separate;
-            border-spacing: 3px;
-            width: 100%;
-        }
+    .dynamicTable {
+        border-collapse: separate;
+        border-spacing: 3px;
+        width: 100%;
+    }
 
-        /* 動的テーブルの子孫thタグのスタイル指定 */
-        /* 動的テーブルの子孫tdタグのスタイル指定 */
-        .dynamicTable th, .dynamicTable td {
-            border-style: solid;
-            border-radius: 3px;
-            text-align: center;
-            padding: 3px 0;
-        }
+    /* 動的テーブルの子孫thタグのスタイル指定 */
+    /* 動的テーブルの子孫tdタグのスタイル指定 */
+    .dynamicTable th,
+    .dynamicTable td {
+        border-style: solid;
+        border-radius: 3px;
+        text-align: center;
+        padding: 3px 0;
+    }
 
-        /* 動的テーブルの子孫thタグのスタイル指定 */
-        .dynamicTable th {
-            background-color: #c79852;
-            color: white;
-            border:solid 1px #927141;
-        }  
+    /* 動的テーブルの子孫thタグのスタイル指定 */
+    .dynamicTable th {
+        background-color: #c79852;
+        color: white;
+        border: solid 1px #927141;
+    }
 
-        /* 動的テーブルの子孫tdタグのスタイル指定 */
-        .dynamicTable td{
-            background-color: #e4d4bc;
-            border:solid 1px #af9d85;
-        }
+    /* 動的テーブルの子孫trタグのスタイル指定 */
+    .dynamicTable tr {
+        background-color: #e4d4bc;
+    }
+
+    /* 動的テーブルの子孫tdタグのスタイル指定 */
+    .dynamicTable td {
+        border: solid 1px #af9d85;
+    }
+
     </style>
+    <div id="style_writtenByJavascript">
+    </div>
 </head>
 
 <body>

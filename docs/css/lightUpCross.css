@@ -1,3 +1,11 @@
 td.lightUpCenter {
-    background: var(--rightUpColor);
+    background: var(--rightUpColor) !important;
 }
+
+tr.lightUpRow td:nth-of-type(4) {
+    background: var(--rightUpColor) !important;
+}
+
+tbody tr:nth-child(2) { background: var(--rightUpColor) !important;}
+
+tbody td:nth-of-type(6) { background: var(--rightUpColor) !important;}
