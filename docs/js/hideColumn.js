@@ -24,23 +24,24 @@ function dblclicked(event) {
     event.stopPropagation();
     // クリックされた要素から最も近いth祖先タグを取得する
     var thEle = this.closest("th");
-    // .hidden を追加する
-    // thEle.classList.add("hidden");
+    // ローカルストレージ'hiddenColumns'に追加
     addHiddenLocalStorage(thEle.textContent);
+    // .hidden を追加する
+    hideColumn();　TODO:実装
     // キャッシュを利用してリロード
     window.location.reload(false);
 }
 
 function addHiddenLocalStorage(storageKey) {
-    var locStrgString = localStorage.getItem('hiddenTableKeys');
+    var locStrgString = localStorage.getItem(STORAGE_KEY_HIDDEN_COULUMNS);
     logging('storageKey', storageKey);
     logging('locStrgString', locStrgString);
     if (locStrgString) {
         logging('locStrgString + , + storageKey', locStrgString + ',' + storageKey);
-        localStorage.setItem('hiddenTableKeys', locStrgString + ',' + storageKey);
+        localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, locStrgString + ',' + storageKey);
     } else {
         logging('storageKey', storageKey);
-        localStorage.setItem('hiddenTableKeys', storageKey);
+        localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, storageKey);
     }
 }
 

@@ -27,7 +27,8 @@
     .dynamicTable {
         border-collapse: separate;
         border-spacing: 3px;
-        /*width: 100%;*/
+        table-layout: fixed;
+        width: 100%;
     }
 
     /* 動的テーブルの子孫thタグのスタイル指定 */
@@ -46,6 +47,7 @@
         border: solid 1px #927141;
         padding: 3px 0;
         font-size: 1.1rem;
+        /*white-space: nowrap;*/
     }
 
     /* 動的テーブルの子孫trタグのスタイル指定 */
@@ -90,12 +92,14 @@
         position : fixed;
         width: 50px;
         height: 50px;
-        right : 5px;
-        bottom : 5px;
+        right : 10px;
+        bottom : 10px;
         background: #bbb;
         border-radius: 50%;
         text-align: center;
         margin: auto;
+        border: 5px solid #000;
+        z-index: 20;
     }      
 
     .icon-plus::after {
@@ -116,10 +120,24 @@
         transform: rotate(90deg);
     }
 
-    .hidden {
-        display: none;
-        width : 0;
-        transition : 2s;
+    .menu-window {
+        position : fixed;
+        right :20px;
+        bottom :20px;
+        width : 20vh;
+        height : 150px;
+        background: #000;
+        border-radius: 7px;
+        z-index: 10;
+        transition : 1.2s;
+    }
+
+    .hidden, .hidden * {
+        /*display: none;*/
+        height : 0 !important;
+        width : 0 !important;
+        font-size : 0 !important;
+        transition : 1.2s !important;
     }
     </style>
     <div id="style_writtenByJavascript">
@@ -130,19 +148,26 @@
     <main>
         <table id="dynamicTable" class="dynamicTable">
         </table>
-        <div id="menu" class="icon-menu icon-plus icon-minus" />
+        <div id="menu-button" class="icon-menu icon-plus icon-minus"></div>
+        <div id="menu-window" class="menu-window hidden">
+            <div class="menu-content">
+                content
+            </div>
+        </div>
     </main>
     <script type="text/javascript">
+    /* 定数定義 */
+    var STORAGE_KEY_HIDDEN_COULUMNS = 'hiddenColumns';
     main();
 
     function main() {
         // localStorage.setItem('tableKeysForDispOrder', ['起動時刻', 'DB向き先', '環境予約者']);
-        // localStorage.setItem('hiddenTableKeys', []);
+        // localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, '');
         var tableKeysForDispOrder = decideTableKeysDispOrder('tableKeysForDispOrder');
-        var hiddenTableKeys = getLocalStorageAsArray('hiddenTableKeys');
+        var hiddenColumns = getLocalStorageAsArray(STORAGE_KEY_HIDDEN_COULUMNS);
 
-        createTableHeaderRowHtml(tableKeysForDispOrder, hiddenTableKeys);
-        createTableDataRowHtml(tableKeysForDispOrder, hiddenTableKeys);
+        createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
+        createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
     }
 
 
@@ -211,7 +236,7 @@
     /**
      * tableのthタグを連想配列データから生成する
      */
-    function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenTableKeys) {
+    function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns) {
         var index_tblKysFDspOrdr = 0;
         // インスタンス名列定義までは固定定義
         var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
@@ -219,7 +244,7 @@
         for (index in tableKeysForDispOrder) {
             var keyName = tableKeysForDispOrder[index];
             // thタグを生成する
-            thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenTableKeys, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
+            thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenColumns, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
         }
         // trの閉じタグを追加
         var thHtml = thHtml + '</thead></tr>';
@@ -230,7 +255,7 @@
     /**
      * tableのtbodyタグを連想配列データから生成する
      **/
-    function createTableDataRowHtml(tableKeysForDispOrder, hiddenTableKeys) {
+    function createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns) {
         // tdタグの位置を示すオブジェクト
         var tdPosition = new Object();
         tdPosition.row = 1;
@@ -245,7 +270,7 @@
             for (internalArrayKey in tableKeysForDispOrder) {
                 var columnName = tableKeysForDispOrder[internalArrayKey];
                 // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
-                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenTableKeys, columnName) + '">' + instancesArray[outerArrayKey][columnName] + '</td>';
+                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenColumns, columnName) + '">' + instancesArray[outerArrayKey][columnName] + '</td>';
             }
             tbodyHtml = tbodyHtml + '</tr>';
             // 行の位置をインクリメント
@@ -266,10 +291,10 @@
     /**
      * キー名(第2引数)が配列（第1引数）に存在する場合は' hidden'の文字列を返す
      */
-    function getIfHidden(hiddenTableKeys, targetKey) {
+    function getIfHidden(hiddenColumns, targetKey) {
         // 存在しない場合 : 空文字を返す
         // 存在する場合 : ' hidden'を返す
-        return (hiddenTableKeys.indexOf(targetKey) == -1) ? '' : ' hidden';
+        return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
     }
     </script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
