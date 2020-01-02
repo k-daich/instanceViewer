@@ -27,35 +27,28 @@ function dblclicked(event) {
     // ローカルストレージ'hiddenColumns'に追加
     addHiddenLocalStorage(thEle.textContent);
     // .hidden を追加する
-    hideColumn();　TODO:実装
+    hideColumn();
     // キャッシュを利用してリロード
     window.location.reload(false);
 }
 
 function addHiddenLocalStorage(storageKey) {
     var locStrgString = localStorage.getItem(STORAGE_KEY_HIDDEN_COULUMNS);
-    logging('storageKey', storageKey);
-    logging('locStrgString', locStrgString);
     if (locStrgString) {
-        logging('locStrgString + , + storageKey', locStrgString + ',' + storageKey);
         localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, locStrgString + ',' + storageKey);
     } else {
-        logging('storageKey', storageKey);
         localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, storageKey);
     }
 }
 
 /**
- * 指定されたキー名のローカルストレージを取得する
- * ※無い場合は空文字を返す
+ * 
+ * 
  */
-function getLocalStorageAsArray(storageKey) {
-    var locStrgString = localStorage.getItem(storageKey);
-    console.log('[getLocalStorageAsArray] ' + storageKey + ' : ' + locStrgString);
-    // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
-    // ローカルストレージに値が無い場合 : 空文字で返す
-    return (locStrgString) ? locStrgString.split(',') : '';
+function hideColumn() {
+
 }
+
 
 /**
  * ログUtil
