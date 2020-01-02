@@ -27,7 +27,7 @@
     .dynamicTable {
         border-collapse: separate;
         border-spacing: 3px;
-        width: 100%;
+        /*width: 100%;*/
     }
 
     /* 動的テーブルの子孫thタグのスタイル指定 */
@@ -37,7 +37,6 @@
         border-style: solid;
         border-radius: 3px;
         text-align: center;
-        padding: 3px 0;
     }
 
     /* 動的テーブルの子孫thタグのスタイル指定 */
@@ -45,18 +44,83 @@
         background-color: #c79852;
         color: white;
         border: solid 1px #927141;
+        padding: 3px 0;
+        font-size: 1.1rem;
     }
 
     /* 動的テーブルの子孫trタグのスタイル指定 */
     .dynamicTable tr {
         background-color: #e4d4bc;
     }
+    /* 動的テーブルの子孫trタグのスタイル指定(偶数行) */
+    .dynamicTable tr:nth-of-type(2n) {
+        background-color: #eaeae0;
+    }
 
     /* 動的テーブルの子孫tdタグのスタイル指定 */
     .dynamicTable td {
         border: solid 1px #af9d85;
+        padding: 2px 0;
+        font-size: 0.9rem;
     }
 
+    .icon-column {
+        position: relative;
+        width: 15px;
+        height: 15px;
+        background: #bbb;
+        border-radius: 50%;
+        text-align: center;
+        margin: auto;
+    }
+
+    .icon-minus::before {
+        position: absolute;
+        top: calc(50% - 1px);
+        left: 50%;
+        content: '';
+        display: inline-block;
+        width: 60%;
+        height: 10%;
+        border-top: 2px solid #fff;
+        transform: translateX(-50%);
+    }
+
+    .icon-menu {
+        position : fixed;
+        width: 50px;
+        height: 50px;
+        right : 5px;
+        bottom : 5px;
+        background: #bbb;
+        border-radius: 50%;
+        text-align: center;
+        margin: auto;
+    }      
+
+    .icon-plus::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        content: '';
+        display: inline-block;
+        width: 50%;
+        height: 50%;
+        border-top: 2px solid #fff;
+        transform: translateX(-50%);
+    }
+
+    .icon-plus:after {
+        top: 25%;
+        left: 0;
+        transform: rotate(90deg);
+    }
+
+    .hidden {
+        display: none;
+        width : 0;
+        transition : 2s;
+    }
     </style>
     <div id="style_writtenByJavascript">
     </div>
@@ -64,32 +128,29 @@
 
 <body>
     <main>
-        <div class=""></div>
         <table id="dynamicTable" class="dynamicTable">
         </table>
+        <div id="menu" class="icon-menu icon-plus icon-minus" />
     </main>
     <script type="text/javascript">
-    // localStorage.setItem('tableKeysForDispOrder', ['起動時刻', 'DB向き先', '環境予約者']);
-    var tableKeysForDispOrder = decideTableKeysDispOrder();
+    main();
 
-    createTableHeaderRowHtml(tableKeysForDispOrder);
-    createTableDataRowHtml(tableKeysForDispOrder);
+    function main() {
+        // localStorage.setItem('tableKeysForDispOrder', ['起動時刻', 'DB向き先', '環境予約者']);
+        // localStorage.setItem('hiddenTableKeys', []);
+        var tableKeysForDispOrder = decideTableKeysDispOrder('tableKeysForDispOrder');
+        var hiddenTableKeys = getLocalStorageAsArray('hiddenTableKeys');
+
+        createTableHeaderRowHtml(tableKeysForDispOrder, hiddenTableKeys);
+        createTableDataRowHtml(tableKeysForDispOrder, hiddenTableKeys);
+    }
+
 
     /**
      * 
      */
-    function decideTableKeysDispOrder() {
-        var locStrgString = localStorage.getItem('tableKeysForDispOrder');
-        console.log('[decideTableKeysDispOrder] localStorage getResult : ' + locStrgString);
-        // ローカルストレージに値が有る場合
-        if (locStrgString) {
-            // カンマ区切り配列に編集する
-            locStrgArray = locStrgString.split(',');
-        }
-        // ローカルストレージに値が無い場合
-        else {
-            locStrgArray = '';
-        }
+    function decideTableKeysDispOrder(storageKey) {
+        var locStrgArray = getLocalStorageAsArray(storageKey);
 
         // localStorageの値が妥当な場合
         if (isCorrectTableKeys(locStrgArray)) {
@@ -101,9 +162,21 @@
             // 現在のデータ値からキー値を取得する
             var tableKeysForDispOrder_current = Object.keys(instancesArray[Object.keys(instancesArray)[0]]);
             // ローカルストレージを更新する
-            localStorage.setItem('tableKeysForDispOrder', tableKeysForDispOrder_current);
+            localStorage.setItem(storageKey, tableKeysForDispOrder_current);
             return tableKeysForDispOrder_current;
         }
+    }
+
+    /**
+     * 指定されたキー名のローカルストレージを取得する
+     * ※無い場合は空文字を返す
+     */
+    function getLocalStorageAsArray(storageKey) {
+        var locStrgString = localStorage.getItem(storageKey);
+        console.log('[getLocalStorageAsArray] ' + storageKey + ' : ' + locStrgString);
+        // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
+        // ローカルストレージに値が無い場合 : 空文字で返す
+        return (locStrgString) ? locStrgString.split(',') : '';
     }
 
     /**
@@ -138,14 +211,15 @@
     /**
      * tableのthタグを連想配列データから生成する
      */
-    function createTableHeaderRowHtml(tableKeysForDispOrder) {
+    function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenTableKeys) {
         var index_tblKysFDspOrdr = 0;
         // インスタンス名列定義までは固定定義
         var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
         // 2次元連想配列の内部配列のキー名を繰り返し取得する
         for (index in tableKeysForDispOrder) {
+            var keyName = tableKeysForDispOrder[index];
             // thタグを生成する
-            thHtml = thHtml + '<th class="moveableColumn" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + tableKeysForDispOrder[index] + '</th>';
+            thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenTableKeys, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
         }
         // trの閉じタグを追加
         var thHtml = thHtml + '</thead></tr>';
@@ -156,19 +230,22 @@
     /**
      * tableのtbodyタグを連想配列データから生成する
      **/
-    function createTableDataRowHtml(tableKeysForDispOrder) {
+    function createTableDataRowHtml(tableKeysForDispOrder, hiddenTableKeys) {
+        // tdタグの位置を示すオブジェクト
         var tdPosition = new Object();
         tdPosition.row = 1;
         tdPosition.column = 0;
         var tbodyHtml = '<tbody>';
+        // 列「No」に設定する値
         var no = 1;
 
         for (outerArrayKey in instancesArray) {
             // Noとインスタンス名列のtdタグを生成
             tbodyHtml = tbodyHtml + '<tr><td id="' + getNextColumnId(tdPosition) + '">' + no++ + '</td><td id="' + getNextColumnId(tdPosition) + '">' + outerArrayKey + '</td>';
             for (internalArrayKey in tableKeysForDispOrder) {
+                var columnName = tableKeysForDispOrder[internalArrayKey];
                 // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
-                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '">' + instancesArray[outerArrayKey][tableKeysForDispOrder[internalArrayKey]] + '</td>';
+                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenTableKeys, columnName) + '">' + instancesArray[outerArrayKey][columnName] + '</td>';
             }
             tbodyHtml = tbodyHtml + '</tr>';
             // 行の位置をインクリメント
@@ -185,9 +262,20 @@
     function getNextColumnId(tdPosition) {
         return tdPosition.row + ':' + ++tdPosition.column;
     }
+
+    /**
+     * キー名(第2引数)が配列（第1引数）に存在する場合は' hidden'の文字列を返す
+     */
+    function getIfHidden(hiddenTableKeys, targetKey) {
+        // 存在しない場合 : 空文字を返す
+        // 存在する場合 : ' hidden'を返す
+        return (hiddenTableKeys.indexOf(targetKey) == -1) ? '' : ' hidden';
+    }
     </script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
     <script type="text/javascript" src="js/lightUpCross.js"></script>
+    <script type="text/javascript" src="js/hideColumn.js"></script>
+    <script type="text/javascript" src="js/menu.js"></script>
 </body>
 
 </html>

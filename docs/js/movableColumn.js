@@ -6,7 +6,6 @@ var dbclcked_element;
 // 主となるイベントリスナーの登録
 moveColumnEventListenr();
 
-
 /**
  * 以降、ファンクション
  */
@@ -22,7 +21,6 @@ function moveColumnEventListenr() {
         elements[i].addEventListener("dblclick", dblclicked, false);
     }
 }
-
 
 /**
  * ダブルクリックされた際の関数

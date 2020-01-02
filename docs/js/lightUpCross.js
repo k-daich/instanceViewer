@@ -56,13 +56,15 @@ function lightUpAdjacent(column, row) {
     // 下方のライトアップ続行フラグ
     var belowContinueFlg = true;
     // だんだんと色づけるようにエフェクトを実施する隣接数
-    var gettingLightUpAmount = 3;
+    var gettingLightUpAmount = 4;
+    // だんだんとライトアップする際のインターバル
+    var lightUpInterval = 400;
 
     // 上下左右に隣接した4データをライトアップ。それ以降の隣接データは同一色で一括ライトアップする
     // 繰り返すごとにライトアップ対象距離をインクリメントする
-    for (var distance = 1, interval = 1; ++interval;) {
-        if (interval == gettingLightUpAmount) {
-            sleep(500 * interval, function() {
+    for (var distance = 1, count = 1; ++count;) {
+        if (count == gettingLightUpAmount) {
+            sleep(lightUpInterval * count + 700, function() {
                 // 列を一括ライトアップする
                 lightUpColumn(column);
                 // 行を一括ライトアップする
@@ -73,7 +75,7 @@ function lightUpAdjacent(column, row) {
         } else {
             // 2秒単位に待機してライトアップ処理を実施する
             // ※callback処理以外はsleep非同期で処理が続行するので注意すること
-            sleep(500 * interval, function() {
+            sleep(lightUpInterval * count, function() {
                 if (leftContinueFlg) {
                     var targetEle = document.getElementById(row + ':' + (column - distance));
                     if (targetEle) {
@@ -141,7 +143,7 @@ function lightUpColumn(column) {
         // 列をライトアップするためのstyleタグを追加する
         logging('lightUpColumn', 'adding id : ' + targetId);
         document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
-            '<style id="' + targetId + '">tbody td:nth-of-type(' + column + ') { background: var(--rightUpColor) !important;}</style>');
+            '<style id="' + targetId + '">tbody td:nth-of-type(' + column + ') { background: var(--rightUpColor) !important;transition: 0.7s;}</style>');
     }
 }
 
@@ -158,7 +160,7 @@ function lightUpRow(row) {
         // 列をライトアップするためのstyleタグを追加する
         logging('lightUpRow', 'adding id : ' + targetId);
         document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
-            '<style id="' + targetId + '">tbody tr:nth-of-type(' + row + ') { background: var(--rightUpColor) !important;}</style>');
+            '<style id="' + targetId + '">tbody tr:nth-of-type(' + row + ') { background: var(--rightUpColor) !important;transition: 0.7s;}</style>');
     }
 }
 
