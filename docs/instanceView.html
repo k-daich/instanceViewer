@@ -10,135 +10,144 @@
     <link rel="stylesheet" type="text/css" href="css/lightUpCross.css">
     <style>
         :root {
-        --baseColor: #363636;
-        /* this color is dynamic set by javascript */
-        --baseColor_bg: #dddddd;
-        /* this color is dynamic set by javascript */
-        --rightUpColor: #e6b2c0;
-        /* this color is dynamic set by javascript */
-        --testVariable: 5;
-    }
+            --baseColor: #363636; /* this color is dynamic set by javascript */
+            --baseColor_bg: #dddddd; /* this color is dynamic set by javascript */
+            --rightUpColor: #e6b2c0; /* this color is dynamic set by javascript */
+        }
 
-    html {
-        color: var(--baseColor);
-        background: var(--baseColor_bg);
-    }
+        html {
+            color: var(--baseColor);
+            background: var(--baseColor_bg);
+        }
 
-    .dynamicTable {
-        border-collapse: separate;
-        border-spacing: 3px;
-        table-layout: fixed;
-        width: 100%;
-    }
+        .dynamicTable {
+            border-collapse: separate;
+            border-spacing: 3px;
+            table-layout: fixed;
+            width: 100%;
+        }
 
-    /* 動的テーブルの子孫thタグのスタイル指定 */
-    /* 動的テーブルの子孫tdタグのスタイル指定 */
-    .dynamicTable th,
-    .dynamicTable td {
-        border-style: solid;
-        border-radius: 3px;
-        text-align: center;
-    }
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .dynamicTable th,
+        .dynamicTable td {
+            border-style: solid;
+            border-radius: 3px;
+            text-align: center;
+        }
 
-    /* 動的テーブルの子孫thタグのスタイル指定 */
-    .dynamicTable th {
-        background-color: #c79852;
-        color: white;
-        border: solid 1px #927141;
-        padding: 3px 0;
-        font-size: 1.1rem;
-        /*white-space: nowrap;*/
-    }
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        .dynamicTable th {
+            background-color: #c79852;
+            color: white;
+            border: solid 1px #927141;
+            padding: 3px 0;
+            font-size: 1.1rem;
+            /*white-space: nowrap;*/
+        }
 
-    /* 動的テーブルの子孫trタグのスタイル指定 */
-    .dynamicTable tr {
-        background-color: #e4d4bc;
-    }
-    /* 動的テーブルの子孫trタグのスタイル指定(偶数行) */
-    .dynamicTable tr:nth-of-type(2n) {
-        background-color: #eaeae0;
-    }
+        /* No列 */
+        th.no {
+            width : 30px;
+        }
 
-    /* 動的テーブルの子孫tdタグのスタイル指定 */
-    .dynamicTable td {
-        border: solid 1px #af9d85;
-        padding: 2px 0;
-        font-size: 0.9rem;
-    }
+        /* 動的テーブルの子孫trタグのスタイル指定 */
+        .dynamicTable tr {
+            background-color: #e4d4bc;
+        }
+        /* 動的テーブルの子孫trタグのスタイル指定(偶数行) */
+        .dynamicTable tr:nth-of-type(2n) {
+            background-color: #eaeae0;
+        }
 
-    .icon-column {
-        position: relative;
-        width: 15px;
-        height: 15px;
-        background: #bbb;
-        border-radius: 50%;
-        text-align: center;
-        margin: auto;
-    }
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .dynamicTable td {
+            border: solid 1px #af9d85;
+            padding: 2px 0;
+            font-size: 0.9rem;
+        }
 
-    .icon-minus::before {
-        position: absolute;
-        top: calc(50% - 1px);
-        left: 50%;
-        content: '';
-        display: inline-block;
-        width: 60%;
-        height: 10%;
-        border-top: 2px solid #fff;
-        transform: translateX(-50%);
-    }
+        .icon-column {
+            position: relative;
+            width: 15px;
+            height: 15px;
+            background: #bbb;
+            border-radius: 50%;
+            text-align: center;
+            margin: auto;
+        }
 
-    .icon-menu {
-        position : fixed;
-        width: 50px;
-        height: 50px;
-        right : 10px;
-        bottom : 10px;
-        background: #bbb;
-        border-radius: 50%;
-        text-align: center;
-        margin: auto;
-        border: 5px solid #000;
-        z-index: 20;
-    }      
+        .icon-minus::before {
+            position: absolute;
+            top: calc(50% - 1px);
+            left: 50%;
+            content: '';
+            display: inline-block;
+            width: 60%;
+            height: 10%;
+            transform: translateX(-50%);
+        }
 
-    .icon-plus::after {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        content: '';
-        display: inline-block;
-        width: 50%;
-        height: 50%;
-        border-top: 2px solid #fff;
-        transform: translateX(-50%);
-    }
+        .icon-column.icon-minus::before {
+            border-top: 2px solid #fff;
+        }
 
-    .icon-plus:after {
-        top: 25%;
-        left: 0;
-        transform: rotate(90deg);
-    }
+        .icon-menu.icon-minus::before {
+            border-top: 4px solid #333;
+        }
 
-    .menu-window {
-        position : fixed;
-        right :20px;
-        bottom :20px;
-        width : 20vh;
-        height : 150px;
-        background: #000;
-        border-radius: 7px;
-        z-index: 10;
-        transition : 1.2s;
-    }
+        .icon-menu {
+            position : fixed;
+            width: 50px;
+            height: 50px;
+            right : 10px;
+            bottom : 10px;
+            background: #ccc;
+            border-radius: 50%;
+            text-align: center;
+            margin: auto;
+            border: 5px solid #333;
+            z-index: 20;
+        }      
 
-    .hidden, .hidden * {
-        /*display: none;*/
-        height : 0 !important;
-        width : 0 !important;
-        font-size : 0 !important;
-        transition : 1.2s !important;
-    }
+        .icon-plus::after {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: '';
+            display: inline-block;
+            width: 50%;
+            height: 50%;
+            border-top: 4px solid #333;
+            transform: translateX(-50%);
+        }
+
+        .icon-plus:after {
+            top: 25%;
+            left: 0;
+            transform: rotate(90deg);
+        }
+
+        .menu-window {
+            position : fixed;
+            right :20px;
+            bottom :20px;
+            width : 20vh;
+            height : 150px;
+            background: #000;
+            border-radius: 7px;
+            z-index: 10;
+            transition : 1.2s;
+        }
+
+        .hidden, .hidden * {
+            /*display: none;*/
+            opacity : 0 !important;
+            height : 5px !important;
+            width : 0 !important;
+            font-size : 0 !important;
+            transition : 1.2s !important;
+        }
     </style>
     <div id="style_writtenByJavascript">
     </div>
@@ -150,48 +159,39 @@
         </table>
         <div id="menu-button" class="icon-menu icon-plus icon-minus"></div>
         <div id="menu-window" class="menu-window hidden">
-            <div class="menu-content">
-                content
-            </div>
+            <ul id="unvealColumnList">
+            </ul>
         </div>
     </main>
     <script type="text/javascript">
     /* 定数定義 */
     var STORAGE_KEY_HIDDEN_COULUMNS = 'hiddenColumns';
-    main();
+    var STORAGE_KEY_TBL_KEYS_DISP_ORDER = 'tableKeysForDispOrder';
+    var INSTANCES_INFO = INSTANCES_INFO_INTERNAL;
 
-    function main() {
-        // localStorage.setItem('tableKeysForDispOrder', ['起動時刻', 'DB向き先', '環境予約者']);
-        // localStorage.setItem(STORAGE_KEY_HIDDEN_COULUMNS, '');
-        var tableKeysForDispOrder = decideTableKeysDispOrder('tableKeysForDispOrder');
-        var hiddenColumns = getLocalStorageAsArray(STORAGE_KEY_HIDDEN_COULUMNS);
-
-        createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
-        createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
-    }
-
-
-    /**
-     * 
-     */
-    function decideTableKeysDispOrder(storageKey) {
-        var locStrgArray = getLocalStorageAsArray(storageKey);
-
-        // localStorageの値が妥当な場合
-        if (isCorrectTableKeys(locStrgArray)) {
-            // ローカルストレージの値を返す
-            return locStrgArray;
+    // src: 外部jsのパス
+    // handler: jsのロード完了後に実行する関数
+    var call = function(src, handler) {
+        var base = document.getElementsByTagName("script")[0];
+        var obj = document.createElement("script");
+        obj.async = true;
+        obj.src = src;
+        if (obj.addEventListener) {
+            obj.onload = function() {
+                handler();
+            }
+        } else {
+            obj.onreadystatechange = function() {
+                if ("loaded" == obj.readyState || "complete" == obj.readyState) {
+                    obj.onreadystatechange = null;
+                    handler();
+                }
+            }
         }
-        // localStorageの値が妥当でない場合
-        else {
-            // 現在のデータ値からキー値を取得する
-            var tableKeysForDispOrder_current = Object.keys(instancesArray[Object.keys(instancesArray)[0]]);
-            // ローカルストレージを更新する
-            localStorage.setItem(storageKey, tableKeysForDispOrder_current);
-            return tableKeysForDispOrder_current;
-        }
-    }
+        base.parentNode.insertBefore(obj, base);
+    };
 
+    call("http:xxxxxxx/xxx.js", function() { /*ここに処理を記載*/ })
     /**
      * 指定されたキー名のローカルストレージを取得する
      * ※無い場合は空文字を返す
@@ -201,106 +201,36 @@
         console.log('[getLocalStorageAsArray] ' + storageKey + ' : ' + locStrgString);
         // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
         // ローカルストレージに値が無い場合 : 空文字で返す
-        return (locStrgString) ? locStrgString.split(',') : '';
+        return (locStrgString) ? locStrgString.split(',') : [];
     }
 
     /**
-     * テーブルキー配列が妥当か現在の値を元に判定する
+     * 表示順決定用ローカルキー配列をローカルストレージより取得する
      */
-    function isCorrectTableKeys(tableKeysForDispOrder) {
-        // 現在のキー配列を取得する
-        var currentKeys = instancesArray[Object.keys(instancesArray)[0]];
-        // 妥当と判定した回数
-        var correctCount = 0;
-
-        // ローカルストレージから取得した配列を元に繰り返し処理
-        for (index in tableKeysForDispOrder) {
-            // ローカルストレージのキー値が現在のキー配列に存在する場合
-            if (tableKeysForDispOrder[index] in currentKeys) {
-                // チェック状態管理用フラグを1つ立てる
-                ++correctCount;
-            } else {
-                console.log('[isCorrectTableKeys] false : A');
-                return false;
-            }
-        }
-        // 妥当と判定した回数が現在のキー配列長と一致しない場合
-        if (Object.keys(currentKeys).length != correctCount) {
-            console.log('[isCorrectTableKeys] false : B');
-            return false;
-        }
-        console.log('[isCorrectTableKeys] true');
-        return true;
+    function getTableKeysForDispOrderArrayFromLocalStorage() {
+        return getLocalStorageAsArray(STORAGE_KEY_HIDDEN_COULUMNS);
     }
 
     /**
-     * tableのthタグを連想配列データから生成する
+     * 非表示カラム配列をローカルストレージより取得する
      */
-    function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns) {
-        var index_tblKysFDspOrdr = 0;
-        // インスタンス名列定義までは固定定義
-        var thHtml = '<thead><tr><th>No</th><th>インスタンス名</th>';
-        // 2次元連想配列の内部配列のキー名を繰り返し取得する
-        for (index in tableKeysForDispOrder) {
-            var keyName = tableKeysForDispOrder[index];
-            // thタグを生成する
-            thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenColumns, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
-        }
-        // trの閉じタグを追加
-        var thHtml = thHtml + '</thead></tr>';
-        document.getElementById('dynamicTable').insertAdjacentHTML(
-            'afterbegin', thHtml);
+    function getHiddenColumnsArrayFrmLocStrg() {
+        return getLocalStorageAsArray(STORAGE_KEY_HIDDEN_COULUMNS);
     }
 
     /**
-     * tableのtbodyタグを連想配列データから生成する
-     **/
-    function createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns) {
-        // tdタグの位置を示すオブジェクト
-        var tdPosition = new Object();
-        tdPosition.row = 1;
-        tdPosition.column = 0;
-        var tbodyHtml = '<tbody>';
-        // 列「No」に設定する値
-        var no = 1;
-
-        for (outerArrayKey in instancesArray) {
-            // Noとインスタンス名列のtdタグを生成
-            tbodyHtml = tbodyHtml + '<tr><td id="' + getNextColumnId(tdPosition) + '">' + no++ + '</td><td id="' + getNextColumnId(tdPosition) + '">' + outerArrayKey + '</td>';
-            for (internalArrayKey in tableKeysForDispOrder) {
-                var columnName = tableKeysForDispOrder[internalArrayKey];
-                // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
-                tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenColumns, columnName) + '">' + instancesArray[outerArrayKey][columnName] + '</td>';
-            }
-            tbodyHtml = tbodyHtml + '</tr>';
-            // 行の位置をインクリメント
-            tdPosition.row++;
-            // 列の位置をリセット
-            tdPosition.column = 0;
-        }
-        // trの閉じタグを追加
-        var tbodyHtml = tbodyHtml + '</tbody></tr>';
-        document.getElementById('dynamicTable').insertAdjacentHTML(
-            'beforeend', tbodyHtml);
-    }
-
-    function getNextColumnId(tdPosition) {
-        return tdPosition.row + ':' + ++tdPosition.column;
-    }
-
-    /**
-     * キー名(第2引数)が配列（第1引数）に存在する場合は' hidden'の文字列を返す
+     * ログUtil
      */
-    function getIfHidden(hiddenColumns, targetKey) {
-        // 存在しない場合 : 空文字を返す
-        // 存在する場合 : ' hidden'を返す
-        return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
+    function logging(processName, message) {
+        console.log('[' + processName + '] ' + message);
     }
     </script>
+    <script type="text/javascript" src="js/constructTable.js"></script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
     <script type="text/javascript" src="js/lightUpCross.js"></script>
     <script type="text/javascript" src="js/hideColumn.js"></script>
     <script type="text/javascript" src="js/menu.js"></script>
+    <script type="text/javascript" src="js/menu_unvealCoulumn.js"></script>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-const instancesArray = {
+const INSTANCES_INFO_INTERNAL = {
     myapl     : { "起動時刻":"2 days ago"    , "環境予約者":"daich", "DB向き先 tran":"dev"     , "DB向き先 master":"dev"     , "停止予定日":"2020/03/03"  },
     myweb     : { "起動時刻":"3 years ago"   , "環境予約者":"hiro" , "DB向き先 tran":"prod"    , "DB向き先 master":"prod"    , "停止予定日":"2020/03/03"  },
     myapl_dev1: { "起動時刻":"14 minutes ago", "環境予約者":"daich", "DB向き先 tran":"dev"     , "DB向き先 master":"content" , "停止予定日":"2020/03/03"  },
@@ -23,4 +23,5 @@ const instancesArray = {
     mymng_dev1: { "起動時刻":"2 days ago"    , "環境予約者":"yoko" , "DB向き先 tran":"ita"     , "DB向き先 master":"ita"     , "停止予定日":"2020/03/03"  },
     mymng_dev2: { "起動時刻":"11 days ago"   , "環境予約者":"chika", "DB向き先 tran":"dev"     , "DB向き先 master":"prod"    , "停止予定日":"2020/03/03"  },
     mymng_dev3: { "起動時刻":"2 days ago"    , "環境予約者":"daich", "DB向き先 tran":"dev2"    , "DB向き先 master":"dev"     , "停止予定日":"2020/03/03"  }
+    mymng_dev4: { "起動時刻":"6 days ago"    , "環境予約者":"yoko" , "DB向き先 tran":"dev"     , "DB向き先 master":"dev1"    , "停止予定日":"2020/06/15"  }
 }
