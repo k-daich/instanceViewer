@@ -1,16 +1,11 @@
 /**
- * メイン
+ * グローバル変数
  */
 // ダブルクリックされた要素を格納する変数
 var dbclcked_element;
-// 主となるイベントリスナーの登録
-moveColumnEventListenr();
 
 /**
  * 以降、ファンクション
- */
-/**
- * 可動な列を実装するためのイベントリスナーを付与する
  */
 function moveColumnEventListenr() {
     // イベントリスナー付与対象の要素を取得する
@@ -18,14 +13,14 @@ function moveColumnEventListenr() {
 
     // マウスが要素内で押されたとき発火
     for (var i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("dblclick", dblclicked, false);
+        elements[i].addEventListener("dblclick", dblclicked_atMovableColumn, false);
     }
 }
 
 /**
  * ダブルクリックされた際の関数
  */
-function dblclicked(event) {
+function dblclicked_atMovableColumn(event) {
     // 直前にダブルクリックした要素を再度ダブルクリックした場合
     if (event.target == dbclcked_element) {
         // 列変更処理のキャンセルを行う

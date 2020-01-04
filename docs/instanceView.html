@@ -13,6 +13,8 @@
             --baseColor: #363636; /* this color is dynamic set by javascript */
             --baseColor_bg: #dddddd; /* this color is dynamic set by javascript */
             --rightUpColor: #e6b2c0; /* this color is dynamic set by javascript */
+            --column1_x: 120px;
+            --column2_x: 200px;
         }
 
         html {
@@ -31,10 +33,12 @@
         /* 動的テーブルの子孫tdタグのスタイル指定 */
         .dynamicTable th,
         .dynamicTable td {
+            position : relative;
             border-style: solid;
             border-radius: 3px;
             text-align: center;
         }
+
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .dynamicTable th {
@@ -43,7 +47,7 @@
             border: solid 1px #927141;
             padding: 3px 0;
             font-size: 1.1rem;
-            /*white-space: nowrap;*/
+            line-height: 1.2rem;
         }
 
         /* No列 */
@@ -51,6 +55,16 @@
             width : 30px;
         }
 
+/*        th.column1 {
+            left : var(--column1_x);
+            transition : 2s;
+        }
+
+        th.column2 {
+            left : calc(var(--column1_x) + var(--column2_x));
+            transition : 2s;
+        }
+*/
         /* 動的テーブルの子孫trタグのスタイル指定 */
         .dynamicTable tr {
             background-color: #e4d4bc;
@@ -104,7 +118,7 @@
             bottom : 10px;
             background: #ccc;
             border-radius: 50%;
-            text-align: center;
+            /*text-align: center;*/
             margin: auto;
             border: 5px solid #333;
             z-index: 20;
@@ -134,6 +148,7 @@
             bottom :20px;
             width : 20vh;
             height : 150px;
+            color : #fff;
             background: #000;
             border-radius: 7px;
             z-index: 10;
@@ -148,6 +163,7 @@
             font-size : 0 !important;
             transition : 1.2s !important;
         }
+
     </style>
     <div id="style_writtenByJavascript">
     </div>
@@ -179,6 +195,12 @@
 
         createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
         createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
+        // this function is in movableColumn.js
+        moveColumnEventListenr();
+        // this function is in lightUpCross.js
+        lightUpCrossEventListener();
+        // this function is in hideColumn.js
+        hideColumnEventListener();
 
         /**
          * 
@@ -295,7 +317,6 @@
         }
     });
 
-
     /**
      * srcの読み込みを待ってからcallbackを実行する
      */
@@ -354,7 +375,6 @@
     }
 
     </script>
-    <script type="text/javascript" src="js/constructTable.js"></script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
     <script type="text/javascript" src="js/lightUpCross.js"></script>
     <script type="text/javascript" src="js/hideColumn.js"></script>

@@ -1,30 +1,27 @@
 /**
- * メイン
- */
-lightUpCrossEventListener();
-
-/**
  * 以降、ファンクション
  */
 function lightUpCrossEventListener() {
     // イベントリスナー付与対象の要素を取得する
     var elements = document.getElementById('dynamicTable').getElementsByTagName('td');
+    logging('lightUpCross', 'elements : ' + elements.length);
 
     // マウスが要素内で押されたとき発火
     for (var i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("dblclick", dblclicked, false);
+        elements[i].addEventListener("dblclick", dblclicked_atLightUpCross, false);
     }
 }
 
 /**
  * ダブルクリックされた際の関数
  */
-function dblclicked(event) {
+function dblclicked_atLightUpCross(event) {
     // TODO:スタイルの初期化
     logging('', event.target);
 
     // TODO:スタイルの変更
     var position = createPosition(event.target.id);
+    logging('lightUpCross', this);
     // クラス名に .tg_dbcl を追加する
     this.classList.add("lightUpCenter");
 

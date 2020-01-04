@@ -1,9 +1,4 @@
 /**
- * メイン
- */
-hideColumnEventListener();
-
-/**
  * 以降、ファンクション
  */
 function hideColumnEventListener() {
@@ -12,14 +7,14 @@ function hideColumnEventListener() {
 
     // マウスが要素内で押されたとき発火
     for (var i = 0; i < elements.length; i++) {
-        elements[i].addEventListener("dblclick", dblclicked, false);
+        elements[i].addEventListener("dblclick", dblclicked_atHideColumn, false);
     }
 }
 
 /**
  * ダブルクリックされた際の関数
  */
-function dblclicked(event) {
+function dblclicked_atHideColumn(event) {
     // 親ノードのイベントリスナーの着火を無効化する
     event.stopPropagation();
     // クリックされた要素から最も近いth祖先タグを取得する
