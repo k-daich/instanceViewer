@@ -13,8 +13,6 @@
             --baseColor: #363636; /* this color is dynamic set by javascript */
             --baseColor_bg: #dddddd; /* this color is dynamic set by javascript */
             --rightUpColor: #e6b2c0; /* this color is dynamic set by javascript */
-            --column1_x: 120px;
-            --column2_x: 200px;
         }
 
         html {
@@ -25,8 +23,12 @@
         .dynamicTable {
             border-collapse: separate;
             border-spacing: 3px;
-            table-layout: fixed;
-            width: 100%;
+            /*table-layout: fixed;*/
+            --varTest1 : 1;
+            --varTest : "var(--column" + var(--varTest1) + "_x)";
+            --column1_x: 100px;
+            --column2_x: 200px;
+            /*width: 100%;*/
         }
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
@@ -34,11 +36,17 @@
         .dynamicTable th,
         .dynamicTable td {
             position : relative;
+            top : 0px;
+            left : 0px;
             border-style: solid;
             border-radius: 3px;
             text-align: center;
         }
 
+/*        .dynamicTable thead>tr {
+            position : fixed;
+            z-index:10;
+        }*/
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .dynamicTable th {
@@ -55,7 +63,7 @@
             width : 30px;
         }
 
-/*        th.column1 {
+        th.column1 {
             left : var(--column1_x);
             transition : 2s;
         }
@@ -64,7 +72,7 @@
             left : calc(var(--column1_x) + var(--column2_x));
             transition : 2s;
         }
-*/
+
         /* 動的テーブルの子孫trタグのスタイル指定 */
         .dynamicTable tr {
             background-color: #e4d4bc;
@@ -79,8 +87,14 @@
             border: solid 1px #af9d85;
             padding: 2px 0;
             font-size: 0.9rem;
+            width : var(--varTest);
         }
 
+        .columnTbl_No {
+            position : relative;
+            left : 0;
+            top : 0;
+        }
         .icon-column {
             position: relative;
             width: 15px;
@@ -118,11 +132,10 @@
             bottom : 10px;
             background: #ccc;
             border-radius: 50%;
-            /*text-align: center;*/
             margin: auto;
             border: 5px solid #333;
             z-index: 20;
-        }      
+        }
 
         .icon-plus::after {
             position: absolute;
@@ -171,8 +184,8 @@
 
 <body>
     <main>
-        <table id="dynamicTable" class="dynamicTable">
-        </table>
+        <div id="dynamicTable" class="dynamicTable">
+        </div>
         <div id="menu-button" class="icon-menu icon-plus icon-minus"></div>
         <div id="menu-window" class="menu-window hidden">
             <ul id="unvealColumnList">
@@ -181,26 +194,43 @@
     </main>
     <script type="text/javascript">
     const JSFILE_DATA = "js/data.js";
+    const JSFILE_MOVABLE_COLMN = "js/movableColumn.js";
+    const JSFILE_LIGHTUP_CROSS = "js/lightUpCross.js";
+    const JSFILE_HIDE_COLUMN = "js/hideColumn.js";
+    const JSFILE_UNVEAL_COLUMN = "js/menu_unvealCoulumn.js";
+
     /* 定数定義 */
     const STORAGE_KEY_HIDDEN_COULUMNS = 'hiddenColumns';
     const STORAGE_KEY_TBL_KEYS_DISP_ORDER = 'tableKeysForDispOrder';
-    var INSTANCES_INFO;
 
-
+    // data.js読み込み完了後にdynamicTableを生成する
     loadScript(JSFILE_DATA, function() {
-        logging('loadScript' , JSFILE_DATA);
-        INSTANCES_INFO = INSTANCES_INFO_INTERNAL;
+        var INSTANCES_INFO = INSTANCES_INFO_INTERNAL;
+
         var tableKeysForDispOrder = decideTableKeysDispOrder();
         var hiddenColumns = getHiddenColumnsArrayFrmLocStrg();
 
-        createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
-        createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
-        // this function is in movableColumn.js
-        moveColumnEventListenr();
-        // this function is in lightUpCross.js
-        lightUpCrossEventListener();
-        // this function is in hideColumn.js
-        hideColumnEventListener();
+        // createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
+        // createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
+        buildTable();
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_MOVABLE_COLMN, function() {
+            // this function is in movableColumn.js
+            moveColumnEventListenr();
+        });
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_LIGHTUP_CROSS, function() {
+            // this function is in lightUpCross.js
+            lightUpCrossEventListener();
+        });
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_HIDE_COLUMN, function() {
+            // this function is in hideColumn.js
+            hideColumnEventListener();
+        });
 
         /**
          * 
@@ -252,56 +282,92 @@
             return true;
         }
 
+        function buildTable() {
+            var column_index = 0;
+            buildFixedTable();
+        }
+
+        function buildFixedTable() {
+            var tableHtml = '<table><thead class="blank"><tr><th>No</th><th>インスタンス名</th></thead><tbody>';
+            var instanceNames = Object.keys(INSTANCES_INFO);
+
+            for (index in instanceNames) {
+                logging('tr', '<tr><td>' + index + '</td></tr>');
+                tableHtml = tableHtml + '<tr><td>' + index + '</td><td>' + instanceNames[index] + '</td></tr>';
+            }
+
+            tableHtml = tableHtml + '</tbody>';
+            document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
+        }
+
+        function buildDynamicColumnTable(columnName, column_index) {
+            var tableHtml = '<table class="oneColumnTable"><thead><tr><th>' + columnName + '</th></thead><tbody>';
+
+            switch (columnName) {
+                case 'No':
+                    tableHtml = tableHtml + buildTbody_No();
+                    break;
+                case 'インスタンス名':
+                    tableHtml = tableHtml + buildTbody_InstanceName();
+                    break;
+                default:
+                    tableHtml = tableHtml + buildTbody_DynamicColumn();
+                    break;
+            }
+            tableHtml = tableHtml + '</tbody>';
+            document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
+        }
+
         /**
          * tableのthタグを連想配列データから生成する
          */
-        function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns) {
-            var index_tblKysFDspOrdr = 0;
-            // インスタンス名列定義までは固定定義
-            var thHtml = '<thead><tr><th class="no">No</th><th>インスタンス名</th>';
-            // 2次元連想配列の内部配列のキー名を繰り返し取得する
-            for (index in tableKeysForDispOrder) {
-                var keyName = tableKeysForDispOrder[index];
-                // thタグを生成する
-                thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenColumns, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
-            }
-            // trの閉じタグを追加
-            var thHtml = thHtml + '</thead></tr>';
-            document.getElementById('dynamicTable').insertAdjacentHTML(
-                'afterbegin', thHtml);
-        }
+        // function createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns) {
+        //     var index_tblKysFDspOrdr = 0;
+        //     // インスタンス名列定義までは固定定義
+        //     var thHtml = '<thead><tr><th class="no">No</th><th>インスタンス名</th>';
+        //     // 2次元連想配列の内部配列のキー名を繰り返し取得する
+        //     for (index in tableKeysForDispOrder) {
+        //         var keyName = tableKeysForDispOrder[index];
+        //         // thタグを生成する
+        //         thHtml = thHtml + '<th class="moveableColumn' + getIfHidden(hiddenColumns, keyName) + '" index_tblKysFDspOrdr="' + index_tblKysFDspOrdr++ + '">' + keyName + '<br/><div class="icon-column icon-minus hidableColumn"></div></th>';
+        //     }
+        //     // trの閉じタグを追加
+        //     var thHtml = thHtml + '</thead></tr>';
+        //     document.getElementById('dynamicTable').insertAdjacentHTML(
+        //         'afterbegin', thHtml);
+        // }
 
         /**
          * tableのtbodyタグを連想配列データから生成する
          **/
-        function createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns) {
-            // tdタグの位置を示すオブジェクト
-            var tdPosition = new Object();
-            tdPosition.row = 1;
-            tdPosition.column = 0;
-            var tbodyHtml = '<tbody>';
-            // 列「No」に設定する値
-            var no = 1;
+        // function createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns) {
+        //     // tdタグの位置を示すオブジェクト
+        //     var tdPosition = new Object();
+        //     tdPosition.row = 1;
+        //     tdPosition.column = 0;
+        //     var tbodyHtml = '<tbody>';
+        //     // 列「No」に設定する値
+        //     var no = 1;
 
-            for (outerArrayKey in INSTANCES_INFO) {
-                // Noとインスタンス名列のtdタグを生成
-                tbodyHtml = tbodyHtml + '<tr><td id="' + getNextColumnId(tdPosition) + '">' + no++ + '</td><td id="' + getNextColumnId(tdPosition) + '">' + outerArrayKey + '</td>';
-                for (internalArrayKey in tableKeysForDispOrder) {
-                    var columnName = tableKeysForDispOrder[internalArrayKey];
-                    // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
-                    tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenColumns, columnName) + '">' + INSTANCES_INFO[outerArrayKey][columnName] + '</td>';
-                }
-                tbodyHtml = tbodyHtml + '</tr>';
-                // 行の位置をインクリメント
-                tdPosition.row++;
-                // 列の位置をリセット
-                tdPosition.column = 0;
-            }
-            // trの閉じタグを追加
-            var tbodyHtml = tbodyHtml + '</tbody></tr>';
-            document.getElementById('dynamicTable').insertAdjacentHTML(
-                'beforeend', tbodyHtml);
-        }
+        //     for (outerArrayKey in INSTANCES_INFO) {
+        //         // Noとインスタンス名列のtdタグを生成
+        //         tbodyHtml = tbodyHtml + '<tr><td id="' + getNextColumnId(tdPosition) + '">' + no++ + '</td><td id="' + getNextColumnId(tdPosition) + '">' + outerArrayKey + '</td>';
+        //         for (internalArrayKey in tableKeysForDispOrder) {
+        //             var columnName = tableKeysForDispOrder[internalArrayKey];
+        //             // 前述以外の列（Noとインスタンス名以外）のtdタグを生成
+        //             tbodyHtml = tbodyHtml + '<td id="' + getNextColumnId(tdPosition) + '" class="' + getIfHidden(hiddenColumns, columnName) + '">' + INSTANCES_INFO[outerArrayKey][columnName] + '</td>';
+        //         }
+        //         tbodyHtml = tbodyHtml + '</tr>';
+        //         // 行の位置をインクリメント
+        //         tdPosition.row++;
+        //         // 列の位置をリセット
+        //         tdPosition.column = 0;
+        //     }
+        //     // trの閉じタグを追加
+        //     var tbodyHtml = tbodyHtml + '</tbody></tr>';
+        //     document.getElementById('dynamicTable').insertAdjacentHTML(
+        //         'beforeend', tbodyHtml);
+        // }
 
         function getNextColumnId(tdPosition) {
             return tdPosition.row + ':' + ++tdPosition.column;
@@ -373,7 +439,6 @@
     function logging(processName, message) {
         console.log('[' + processName + '] ' + message);
     }
-
     </script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
     <script type="text/javascript" src="js/lightUpCross.js"></script>
