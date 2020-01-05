@@ -1,4 +1,4 @@
-const INSTANCES_INFO_INTERNAL = {
+const INSTANCES_INFO = {
     myapl     : { "起動時刻":"2 days ago"    , "環境予約者":"daich", "DB向き先 tran":"dev"     , "DB向き先 master":"dev"     , "停止予定日":"2020/03/03"  },
     myweb     : { "起動時刻":"3 years ago"   , "環境予約者":"hiro" , "DB向き先 tran":"prod"    , "DB向き先 master":"prod"    , "停止予定日":"2020/03/03"  },
     myapl_dev1: { "起動時刻":"14 minutes ago", "環境予約者":"daich", "DB向き先 tran":"dev"     , "DB向き先 master":"content" , "停止予定日":"2020/03/03"  },
