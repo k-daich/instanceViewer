@@ -35,6 +35,9 @@
             border-style: solid;
             border-radius: 3px;
             text-align: center;
+            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
         }
 
         .fixedColumnTable {
@@ -48,10 +51,15 @@
             left : var(--nonFixedStartPos_x);
         }
 
+        .oneColumnTable {
+            position : absolute;
+        }
+
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .tableCommon th {
             position : fixed;
             z-index:20;
+            top : var(--nonFixedStartPos_y);
             background-color: #c79852;
             color: white;
             border: solid 1px #927141;
@@ -84,7 +92,6 @@
             border: solid 1px #af9d85;
             padding: 2px 10px;
             font-size: 0.9rem;
-            width : var(--varTest);
         }
 
         .icon-column {
@@ -307,24 +314,28 @@
 
         function buildTable(instancesInfo, tableKeysForDispOrder, hiddenColumns) {
             var column_index = 0;
-            var TableTheadNames = Object.keys(INSTANCES_INFO)[0];
-            buildFixedColumnTable();
+            buildFixedColumnTable(instancesInfo);
             instancesInfo.columnNames.map(columnName => buildDynamicColumnTable(column_index++, columnName));
         }
 
-        function buildFixedColumnTable() {
-            var tableHtml = '<table><thead><tr><th>No</th><th>インスタンス名</th></thead><tbody>';
-            var instanceNames = Object.keys(INSTANCES_INFO);
+        function buildFixedColumnTable(instancesInfo) {
+            var tableHtml = '<table><thead><tr><th>No</th><th>インスタンス名</th></tr></thead><tbody>';
+            var no = 1;
 
-            instanceNames.map(instanceName =>
-                tableHtml = tableHtml + '<tr><td>' + (Number(index) + 1) + '</td><td>' + instanceNames[index] + '</td></tr>');
+            instancesInfo.instanceNames.map(
+                instanceName => {
+                    logging('instanceNames', instanceName);
+                    tableHtml = tableHtml + '<tr><td>' + no++ + '</td><td>' + instanceName + '</td></tr>';
+                }
+            );
 
-            tableHtml = tableHtml + '</tbody>';
+            tableHtml = tableHtml + '</tbody></table>';
             document.getElementById('fixedColumnTable').insertAdjacentHTML('beforeend', tableHtml);
         }
 
         function buildDynamicColumnTable(column_index, columnName) {
-            var tableHtml = '<table class="oneColumnTable' + column_index + '"><thead><tr><th>' + columnName + '</th></thead><tbody>';
+            var targetId = 'columnTableX_' + column_index;
+            var tableHtml = '<table id="' + targetId + '" class="oneColumnTable ' + targetId + '"><thead><tr><th>' + columnName + '</th></tr></thead><tbody>';
             var instanceNames = Object.keys(INSTANCES_INFO);
 
             for (index in instanceNames) {
@@ -333,7 +344,7 @@
 
             tableHtml = tableHtml + '</tbody></table>';
             document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
-            calcColumnPosition(column_index);
+            calcColumnPosition(column_index, document.getElementById(targetId).scrollWidth);
         }
 
         function getNextColumnId(tdPosition) {
@@ -349,26 +360,27 @@
             return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
         }
 
-        function calcColumnPosition(column_index) {
+        function calcColumnPosition(column_index, column_width) {
             var target_id = 'columnTableX_' + column_index;
+            var target_style_id = target_id + '_style';
 
-            var leftPositionFormula = 'width : calc(';
+            var leftPositionFormula = 'width : calc( var(--nonFixedStartPos_x) + ';
 
-            for (var i = 1; i <= column_index; i++, leftPositionFormula = leftPositionFormula + ' + ') {
+            for (var i = 0; i <= column_index; i++, leftPositionFormula = leftPositionFormula + ' + ') {
                 leftPositionFormula = leftPositionFormula + 'var(--columnWidth_' + i + ')'
             }
 
-            if (!document.getElementById(target_id)) {
-                logging('calcFormula', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
+            if (!document.getElementById(target_style_id)) {
+                logging('calc insert', '<style id="' + target_style_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
                 document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
-                    '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
+                    '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
+                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width);
+            } else {
+                logging('calc update', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
+                document.getElementById(target_id).innerHtml =
+                    '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>';
+                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + 100);
             }
-            else {
-                logging('calcFormula', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
-                document.getElementById(target_id).textContent = 
-                    '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>';
-            }
-
         }
     });
 
