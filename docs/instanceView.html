@@ -23,11 +23,6 @@
         .tableCommon {
             border-collapse: separate;
             border-spacing: 3px;
-            /*table-layout: fixed;*/
-            --varTest1 : 1;
-            --varTest : "var(--column" + var(--varTest1) + "_x)";
-            --column1_x: 100px;
-            --column2_x: 200px;
             --nonFixedStartPos_x: 165px;
             --nonFixedStartPos_y: 8px;
             /*width: 100%;*/
@@ -44,15 +39,7 @@
 
         .fixedColumnTable {
             position : fixed;
-            z-index:10;
-        }
-
-        .z-index10 {
-                        z-index:10;
-        }
-
-        .z-index20 {
-                        z-index:20;
+            z-index:20;
         }
 
         .dynamicTable {
@@ -63,6 +50,8 @@
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .tableCommon th {
+            position : fixed;
+            z-index:20;
             background-color: #c79852;
             color: white;
             border: solid 1px #927141;
@@ -93,7 +82,7 @@
         /* 動的テーブルの子孫tdタグのスタイル指定 */
         .tableCommon td {
             border: solid 1px #af9d85;
-            padding: 2px 0;
+            padding: 2px 10px;
             font-size: 0.9rem;
             width : var(--varTest);
         }
@@ -209,13 +198,13 @@
 
     // data.js読み込み完了後にdynamicTableを生成する
     loadScript(JSFILE_DATA, function() {
-        var instanceInfo = buildDataAsObject();
+        var instancesInfo = buildDataAsObject();
         var tableKeysForDispOrder = decideTableKeysDispOrder();
         var hiddenColumns = getHiddenColumnsArrayFrmLocStrg();
 
         // createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
         // createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
-        buildTable(tableKeysForDispOrder, hiddenColumns);
+        buildTable(instancesInfo, tableKeysForDispOrder, hiddenColumns);
 
         // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
         loadScript(JSFILE_MOVABLE_COLMN, function() {
@@ -234,6 +223,37 @@
             // this function is in hideColumn.js
             hideColumnEventListener();
         });
+
+        /**
+         * data.jsからオブジェクトを構築する
+         */
+        function buildDataAsObject() {
+            var firstTimeFlg = true;
+            var instancesInfo = new Object();
+            instancesInfo.instanceNames = [];
+            Object.keys(INSTANCES_INFO).map(
+                key => {
+                    if (firstTimeFlg) {
+                        firstTimeFlg = false;
+                        instancesInfo.columnNames = Object.keys(INSTANCES_INFO[key]);
+                    }
+                    instancesInfo.instanceNames.push(key);
+                    instancesInfo[key] = buildInstanceAsObject(key, INSTANCES_INFO[key]);
+                }
+            );
+            loggingObj("instancesInfo", instancesInfo);
+            return instancesInfo;
+        }
+
+        function buildInstanceAsObject(instanceName, associativeArray_depth2) {
+            var instance = new Object();
+            instance.instanceName = instanceName;
+            Object.keys(associativeArray_depth2).forEach(key =>
+                instance[key] = associativeArray_depth2[key]
+            );
+            loggingObj(instance.instanceName, instance);
+            return instance;
+        }
 
         /**
          * 
@@ -285,36 +305,35 @@
             return true;
         }
 
-        function buildTable(tableKeysForDispOrder, hiddenColumns) {
-            var TableTheadNames = Object.keys(INSTANCES_INFO[Object.keys(INSTANCES_INFO)[0]]);
+        function buildTable(instancesInfo, tableKeysForDispOrder, hiddenColumns) {
+            var column_index = 0;
+            var TableTheadNames = Object.keys(INSTANCES_INFO)[0];
             buildFixedColumnTable();
-            for (var i = 0, theadName = TableTheadNames[i]; i < TableTheadNames.length; i++) {
-                buildDynamicColumnTable(theadName);
-            }
+            instancesInfo.columnNames.map(columnName => buildDynamicColumnTable(column_index++, columnName));
         }
 
         function buildFixedColumnTable() {
             var tableHtml = '<table><thead><tr><th>No</th><th>インスタンス名</th></thead><tbody>';
             var instanceNames = Object.keys(INSTANCES_INFO);
 
-            for (index in instanceNames) {
-                tableHtml = tableHtml + '<tr><td>' + (Number(index) + 1) + '</td><td>' + instanceNames[index] + '</td></tr>';
-            }
+            instanceNames.map(instanceName =>
+                tableHtml = tableHtml + '<tr><td>' + (Number(index) + 1) + '</td><td>' + instanceNames[index] + '</td></tr>');
 
             tableHtml = tableHtml + '</tbody>';
             document.getElementById('fixedColumnTable').insertAdjacentHTML('beforeend', tableHtml);
         }
 
-        function buildDynamicColumnTable(theadName) {
-            var tableHtml = '<table class="oneColumnTable"><thead><tr><th>' + theadName + '</th></thead><tbody>';
+        function buildDynamicColumnTable(column_index, columnName) {
+            var tableHtml = '<table class="oneColumnTable' + column_index + '"><thead><tr><th>' + columnName + '</th></thead><tbody>';
             var instanceNames = Object.keys(INSTANCES_INFO);
 
             for (index in instanceNames) {
-                tableHtml = tableHtml + '<tr><td>' + getInstanceInfo(instanceNames[index], theadName) + '</td></tr>';
+                tableHtml = tableHtml + '<tr><td>' + getInstanceInfo(instanceNames[index], columnName) + '</td></tr>';
             }
 
             tableHtml = tableHtml + '</tbody></table>';
             document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
+            calcColumnPosition(column_index);
         }
 
         function getNextColumnId(tdPosition) {
@@ -328,6 +347,28 @@
             // 存在しない場合 : 空文字を返す
             // 存在する場合 : ' hidden'を返す
             return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
+        }
+
+        function calcColumnPosition(column_index) {
+            var target_id = 'columnTableX_' + column_index;
+
+            var leftPositionFormula = 'width : calc(';
+
+            for (var i = 1; i <= column_index; i++, leftPositionFormula = leftPositionFormula + ' + ') {
+                leftPositionFormula = leftPositionFormula + 'var(--columnWidth_' + i + ')'
+            }
+
+            if (!document.getElementById(target_id)) {
+                logging('calcFormula', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
+                document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
+                    '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
+            }
+            else {
+                logging('calcFormula', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>');
+                document.getElementById(target_id).textContent = 
+                    '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + '!important;transition: 0.7s;} :root {--columnWidth_' + column_index + ' } < /style>';
+            }
+
         }
     });
 
@@ -365,26 +406,6 @@
         // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
         // ローカルストレージに値が無い場合 : 空文字で返す
         return (locStrgString) ? locStrgString.split(',') : [];
-    }
-
-    /**
-     * data.jsからオブジェクトを構築する
-     */
-    function buildDataAsObject() {
-        var instancesInfo = new Object();
-        Object.keys(INSTANCES_INFO).forEach(key =>
-            instancesInfo[key] = buildInstanceAsObject(key, INSTANCES_INFO[key])
-        );
-        loggingObj("instancesInfo", instancesInfo);
-    }
-
-    function buildInstanceAsObject(instanceName, associativeArray_depth2) {
-        var instance = new Object();
-        instance.instanceName = instanceName;
-        Object.keys(associativeArray_depth2).forEach(key =>
-            instance[key] = associativeArray_depth2[key]);
-        loggingObj(instance.instanceName, instance);
-        return instance;
     }
 
     /**
