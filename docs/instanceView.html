@@ -23,8 +23,6 @@
         .tableCommon {
             border-collapse: separate;
             border-spacing: 3px;
-            --nonFixedStartPos_x: 165px;
-            --nonFixedStartPos_y: 8px;
             /*width: 100%;*/
         }
 
@@ -47,35 +45,31 @@
 
         .dynamicTable {
             position : absolute;
-            top : var(--nonFixedStartPos_y);
-            left : var(--nonFixedStartPos_x);
+            padding : 10px;
+        }
+
+        .dynamicTable th {
+            position : fixed;
+            z-index:20;
+            top : var(--FixedColTblTop_y);
+            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
         }
 
         .oneColumnTable {
             position : absolute;
+            top : var(--FixedColTblTop_y);
         }
 
         /* 動的テーブルの子孫thタグのスタイル指定 */
         .tableCommon th {
-            position : fixed;
-            z-index:20;
-            top : var(--nonFixedStartPos_y);
             background-color: #c79852;
             color: white;
             border: solid 1px #927141;
             padding: 3px 0;
             font-size: 1.1rem;
             line-height: 1.2rem;
-        }
-
-        th.column1 {
-            left : var(--column1_x);
-            transition : 2s;
-        }
-
-        th.column2 {
-            left : calc(var(--column1_x) + var(--column2_x));
-            transition : 2s;
         }
 
         /* 動的テーブルの子孫trタグのスタイル指定 */
@@ -176,6 +170,12 @@
             transition : 1.2s !important;
         }
 
+        .debugContent:before {
+            position : absolute;
+            /*right : 0;*/
+            top : 0;
+            right : var(--test);
+        }
     </style>
     <div id="style_writtenByJavascript">
     </div>
@@ -184,13 +184,13 @@
 <body>
     <main>
         <div id="fixedColumnTable" class="tableCommon fixedColumnTable"></div>
-        <div id="fixedTheadTable" class="tableCommon fixedTheadTable"></div>
         <div id="dynamicTable" class="tableCommon dynamicTable"></div>
         <div id="menu-button" class="icon-menu icon-plus icon-minus"></div>
         <div id="menu-window" class="menu-window hidden">
             <ul id="unvealColumnList">
             </ul>
         </div>
+        <div class="debugContent">debugContent</div>
     </main>
     <script type="text/javascript">
     const JSFILE_DATA = "js/data.js";
@@ -316,6 +316,7 @@
             var column_index = 0;
             buildFixedColumnTable(instancesInfo);
             instancesInfo.columnNames.map(columnName => buildDynamicColumnTable(column_index++, columnName));
+            setProperty_fixedColTblPosition();
         }
 
         function buildFixedColumnTable(instancesInfo) {
@@ -364,22 +365,22 @@
             var target_id = 'columnTableX_' + column_index;
             var target_style_id = target_id + '_style';
 
-            var leftPositionFormula = 'width : calc( var(--nonFixedStartPos_x) + ';
+            var leftPositionFormula = 'left : calc( var(--FixedColTblRight_x)';
 
-            for (var i = 0; i <= column_index; i++, leftPositionFormula = leftPositionFormula + ' + ') {
-                leftPositionFormula = leftPositionFormula + 'var(--columnWidth_' + i + ')'
+            for (var i = 0; i < column_index; i++) {
+                leftPositionFormula = leftPositionFormula + ' + var(--columnWidth_' + i + ')';
             }
 
             if (!document.getElementById(target_style_id)) {
                 logging('calc insert', '<style id="' + target_style_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
                 document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
                     '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
-                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width);
+                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
             } else {
                 logging('calc update', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
                 document.getElementById(target_id).innerHtml =
                     '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>';
-                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + 100);
+                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
             }
         }
     });
@@ -461,6 +462,15 @@
     function loggingObj(processName, object) {
         console.log('[' + processName + '] ');
         console.dir(object);
+    }
+
+    /** 
+     * fixedColumnTableの
+     */
+    function setProperty_fixedColTblPosition() {
+        var rect = document.getElementById('fixedColumnTable').getBoundingClientRect();
+        document.documentElement.style.setProperty('--FixedColTblRight_x', rect.right + "px");
+        document.documentElement.style.setProperty('--FixedColTblTop_y', rect.top + "px");
     }
     </script>
     <script type="text/javascript" src="js/movableColumn.js"></script>
