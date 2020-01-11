@@ -5,9 +5,50 @@
     <title>InstanceView</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <script type="text/javascript" src="js/data.js"></script> -->
     <link rel="stylesheet" type="text/css" href="css/movableColumn.css">
     <link rel="stylesheet" type="text/css" href="css/lightUpCross.css">
+    <style id="columnTableX_0_style">
+        .columnTableX_0 {
+            left : calc( var(--FixedColTblRight_x));
+            transition: 0.7s;
+        }
+   </style>
+    <style id="columnTableX_1_style">
+        .columnTableX_1 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0));
+            transition: 0.7s;
+        }
+    </style>
+    <style id="columnTableX_2_style">
+        .columnTableX_2 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1));
+            transition: 0.7s;
+        }
+    </style>
+    <style id="columnTableX_3_style">
+        .columnTableX_3 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2));
+            transition: 0.7s;
+        }
+    </style>
+    <style id="columnTableX_4_style">
+        .columnTableX_4 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3));
+            transition: 0.7s;
+        }
+    </style>
+    <style id="columnTableX_5_style">
+        .columnTableX_5 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4));
+            transition: 0.7s;
+        }
+    </style>
+    <style id="columnTableX_6_style">
+        .columnTableX_6 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5))
+            ;transition: 0.7s;
+        }
+    </style>
     <style>
         :root {
             --baseColor: #363636; /* this color is dynamic set by javascript */
@@ -23,6 +64,7 @@
         .tableCommon {
             border-collapse: separate;
             border-spacing: 3px;
+            white-space: nowrap;
             /*width: 100%;*/
         }
 
@@ -57,6 +99,12 @@
             width: max-content;
         }
 
+        .dynamicTable tbody {
+            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
+        }
+
         .oneColumnTable {
             position : absolute;
             top : var(--FixedColTblTop_y);
@@ -67,7 +115,7 @@
             background-color: #c79852;
             color: white;
             border: solid 1px #927141;
-            padding: 3px 0;
+            padding: 3px 10px;
             font-size: 1.1rem;
             line-height: 1.2rem;
         }
@@ -193,6 +241,9 @@
         <div class="debugContent">debugContent</div>
     </main>
     <script type="text/javascript">
+    const FIX_COLUMN_NO = "No";
+    const FIX_COLUMN_INS = "インスタンス名";
+
     const JSFILE_DATA = "js/data.js";
     const JSFILE_MOVABLE_COLMN = "js/movableColumn.js";
     const JSFILE_LIGHTUP_CROSS = "js/lightUpCross.js";
@@ -205,13 +256,12 @@
 
     // data.js読み込み完了後にdynamicTableを生成する
     loadScript(JSFILE_DATA, function() {
-        var instancesInfo = buildDataAsObject();
+        const INSTANCE_NAMES = Object.keys(INSTANCES_INFO);
+        const DYNAMIC_COLUMN_NAMES = Object.keys(INSTANCES_INFO[Object.keys(INSTANCES_INFO)[0]]);
         var tableKeysForDispOrder = decideTableKeysDispOrder();
         var hiddenColumns = getHiddenColumnsArrayFrmLocStrg();
 
-        // createTableHeaderRowHtml(tableKeysForDispOrder, hiddenColumns);
-        // createTableDataRowHtml(tableKeysForDispOrder, hiddenColumns);
-        buildTable(instancesInfo, tableKeysForDispOrder, hiddenColumns);
+        buildTable(tableKeysForDispOrder, hiddenColumns);
 
         // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
         loadScript(JSFILE_MOVABLE_COLMN, function() {
@@ -230,37 +280,6 @@
             // this function is in hideColumn.js
             hideColumnEventListener();
         });
-
-        /**
-         * data.jsからオブジェクトを構築する
-         */
-        function buildDataAsObject() {
-            var firstTimeFlg = true;
-            var instancesInfo = new Object();
-            instancesInfo.instanceNames = [];
-            Object.keys(INSTANCES_INFO).map(
-                key => {
-                    if (firstTimeFlg) {
-                        firstTimeFlg = false;
-                        instancesInfo.columnNames = Object.keys(INSTANCES_INFO[key]);
-                    }
-                    instancesInfo.instanceNames.push(key);
-                    instancesInfo[key] = buildInstanceAsObject(key, INSTANCES_INFO[key]);
-                }
-            );
-            loggingObj("instancesInfo", instancesInfo);
-            return instancesInfo;
-        }
-
-        function buildInstanceAsObject(instanceName, associativeArray_depth2) {
-            var instance = new Object();
-            instance.instanceName = instanceName;
-            Object.keys(associativeArray_depth2).forEach(key =>
-                instance[key] = associativeArray_depth2[key]
-            );
-            loggingObj(instance.instanceName, instance);
-            return instance;
-        }
 
         /**
          * 
@@ -287,15 +306,13 @@
          * テーブルキー配列が妥当か現在の値を元に判定する
          */
         function isCorrectTableKeys(tableKeysForDispOrder) {
-            // 現在のキー配列を取得する
-            var currentKeys = INSTANCES_INFO[Object.keys(INSTANCES_INFO)[0]];
             // 妥当と判定した回数
             var correctCount = 0;
 
             // ローカルストレージから取得した配列を元に繰り返し処理
             for (index in tableKeysForDispOrder) {
                 // ローカルストレージのキー値が現在のキー配列に存在する場合
-                if (tableKeysForDispOrder[index] in currentKeys) {
+                if (DYNAMIC_COLUMN_NAMES.indexOf(tableKeysForDispOrder[index]) >= 0) {
                     // チェック状態管理用フラグを1つ立てる
                     ++correctCount;
                 } else {
@@ -304,7 +321,7 @@
                 }
             }
             // 妥当と判定した回数が現在のキー配列長と一致しない場合
-            if (Object.keys(currentKeys).length != correctCount) {
+            if (DYNAMIC_COLUMN_NAMES.length != correctCount) {
                 console.log('[isCorrectTableKeys] false : B');
                 return false;
             }
@@ -312,21 +329,20 @@
             return true;
         }
 
-        function buildTable(instancesInfo, tableKeysForDispOrder, hiddenColumns) {
+        function buildTable(tableKeysForDispOrder, hiddenColumns) {
             var column_index = 0;
-            buildFixedColumnTable(instancesInfo);
-            instancesInfo.columnNames.map(columnName => buildDynamicColumnTable(column_index++, columnName));
+            buildFixedColumnTable();
+            DYNAMIC_COLUMN_NAMES.map(columnName => buildDynamicColumnTable(column_index++, columnName));
             setProperty_fixedColTblPosition();
         }
 
-        function buildFixedColumnTable(instancesInfo) {
-            var tableHtml = '<table><thead><tr><th>No</th><th>インスタンス名</th></tr></thead><tbody>';
-            var no = 1;
+        function buildFixedColumnTable() {
+            var tableHtml = '<table><thead><tr><th>' + FIX_COLUMN_NO + '</th><th>' + FIX_COLUMN_INS + '</th></tr></thead><tbody>';
+            var no = 0;
 
-            instancesInfo.instanceNames.map(
+            INSTANCE_NAMES.map(
                 instanceName => {
-                    logging('instanceNames', instanceName);
-                    tableHtml = tableHtml + '<tr><td>' + no++ + '</td><td>' + instanceName + '</td></tr>';
+                    tableHtml = tableHtml + '<tr><td>' + ++no + '</td><td>' + instanceName + '</td></tr>';
                 }
             );
 
@@ -345,11 +361,8 @@
 
             tableHtml = tableHtml + '</tbody></table>';
             document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
+            beSameWidthThAndTd(targetId);
             calcColumnPosition(column_index, document.getElementById(targetId).scrollWidth);
-        }
-
-        function getNextColumnId(tdPosition) {
-            return tdPosition.row + ':' + ++tdPosition.column;
         }
 
         /**
@@ -361,6 +374,14 @@
             return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
         }
 
+        function beSameWidthThAndTd(targetId) {
+            var targetTable = document.getElementById(targetId);
+            targetTable.style.setProperty('width',
+                Math.max(
+                    targetTable.getElementsByTagName('thead')[0].scrollWidth,
+                    targetTable.getElementsByTagName('tbody')[0].scrollWidth) + 'px');
+        }
+
         function calcColumnPosition(column_index, column_width) {
             var target_id = 'columnTableX_' + column_index;
             var target_style_id = target_id + '_style';
@@ -370,18 +391,7 @@
             for (var i = 0; i < column_index; i++) {
                 leftPositionFormula = leftPositionFormula + ' + var(--columnWidth_' + i + ')';
             }
-
-            if (!document.getElementById(target_style_id)) {
-                logging('calc insert', '<style id="' + target_style_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
-                document.getElementById("style_writtenByJavascript").insertAdjacentHTML('beforeend',
-                    '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
-                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
-            } else {
-                logging('calc update', '<style id="' + target_id + '"> .' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>');
-                document.getElementById(target_id).innerHtml =
-                    '<style id="' + target_style_id + '"> #' + target_id + ' { ' + leftPositionFormula + ')!important;transition: 0.7s;} </style>';
-                document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
-            }
+            document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
         }
     });
 
@@ -419,13 +429,6 @@
         // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
         // ローカルストレージに値が無い場合 : 空文字で返す
         return (locStrgString) ? locStrgString.split(',') : [];
-    }
-
-    /**
-     * インスタンス名の配列を返す
-     */
-    function getInstanceNames() {
-        return Object.keys(INSTANCES_INFO).split(',');
     }
 
     /**
