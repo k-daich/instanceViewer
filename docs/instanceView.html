@@ -10,14 +10,7 @@
         /* this color is dynamic set by javascript */
         --rightUpColor: #e6b2c0;
         /* this color is dynamic set by javascript */
-        --FixedColTblRight_x: 100px;
-        --FixedTheadTblBottom_y: 200px;
-        --columnWidth_0: 110px;
-        --columnWidth_1: 120px;
-        --columnWidth_2: 130px;
-        --columnWidth_3: 140px;
-        --columnWidth_4: 150px;
-        --columnWidth_5: 160px;
+        --FixedColTblRight_x: 10px;
     }
 
     .oneColumnTble {
@@ -26,42 +19,35 @@
 
     .col_0 {
         left: var(--FixedColTblRight_x);
-        width : 100px; /** reWriten by js */
     }
 
     .col_1 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0));
         top : var(--FixedTheadTblBottom_y);
-        width : 100px; /** reWriten by js */
     }
 
     .col_2 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1));
         top : var(--FixedTheadTblBottom_y);
-        width : 100px; /** reWriten by js */
     }
 
     .col_3 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2));
         top : var(--FixedTheadTblBottom_y);
-        width : 100px; /** reWriten by js */
     }
 
     .col_4 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3));
         top : var(--FixedTheadTblBottom_y);
-        width : 100px; /** reWriten by js */
     }
 
     .col_5 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4));
         top : var(--FixedTheadTblBottom_y);
-        width : 100px; /** reWriten by js */
     }
 
     .col_6 {
         left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5));
-        width : 100px; /** reWriten by js */
     }
 
     .oneColumnTble {
@@ -95,144 +81,145 @@
 
     </style>
 </head>
+
 <body>
-<main>
-    <table class="theadTbl col_0">
-        <th>
-            No
-        </th>
-    </table>
-    <table class="theadTbl col_1">
-        <th>
-            インスタンス名
-        </th>
-    </table>
-    <table class="theadTbl col_2">
-        <th>
-            DB向き先
-        </th>
-    </table>
-    <table class="theadTbl col_3">
-        <th>
-            環境予約者
-        </th>
-    </table>
-    <table class="theadTbl col_4">
-        <th>
-            案件名
-        </th>
-    </table>
-    <table class="fixTbl oneColumnTble col_0">
-        <tr>
-            <td>
-                1
-            </td>
-        </tr>
-        <tr>
-            <td>
-                2
-            </td>
-        </tr>
-        <tr>
-            <td>
-                3
-            </td>
-        </tr>
-        <tr>
-            <td>
-                4
-            </td>
-        </tr>
-    </table>
-    <table class="fixTbl oneColumnTble col_1">
-        <tr>
-            <td>
-                myapl
-            </td>
-        </tr>
-        <tr>
-            <td>
-                myapl_dev1
-            </td>
-        </tr>
-        <tr>
-            <td>
-                myapl_dev2
-            </td>
-        </tr>
-        <tr>
-            <td>
-                myapl_dev3
-            </td>
-        </tr>
-    </table>
-    <table class="oneColumnTble col_2 movableTbl">
-        <tr>
-            <td>
-                content
-            </td>
-        </tr>
-        <tr>
-            <td>
-                dev
-            </td>
-        </tr>
-        <tr>
-            <td>
-                itb
-            </td>
-        </tr>
-        <tr>
-            <td>
-                stage
-            </td>
-        </tr>
-    </table>
-    <table class="oneColumnTble col_3 movableTbl">
-        <tr>
-            <td>
-                daichi
-            </td>
-        </tr>
-        <tr>
-            <td>
-                hiro
-            </td>
-        </tr>
-        <tr>
-            <td>
-                yoko
-            </td>
-        </tr>
-        <tr>
-            <td>
-                chika
-            </td>
-        </tr>
-    </table>
-    <table class="oneColumnTble col_4 movableTbl">
-        <tr>
-            <td>
-                サイトリニューアル案件Ph8
-            </td>
-        </tr>
-        <tr>
-            <td>
-                DB更改
-            </td>
-        </tr>
-        <tr>
-            <td>
-                エントリー即時化対応Ph２
-            </td>
-        </tr>
-        <tr>
-            <td>
-                電子化対応_リカバリ自動化
-            </td>
-        </tr>
-    </table>
-</main>
+    <main>
+        <table class="fixTbl theadTbl col_0">
+            <th>
+                No
+            </th>
+        </table>
+        <table class="fixTbl theadTbl col_1">
+            <th>
+                インスタンス名
+            </th>
+        </table>
+        <table class="theadTbl col_2">
+            <th>
+                DB向き先
+            </th>
+        </table>
+        <table class="theadTbl col_3">
+            <th>
+                環境予約者
+            </th>
+        </table>
+        <table class="theadTbl col_4">
+            <th>
+                案件名
+            </th>
+        </table>
+        <table class="fixTbl oneColumnTble col_0">
+            <tr>
+                <td>
+                    1
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    2
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    3
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    4
+                </td>
+            </tr>
+        </table>
+        <table class="fixTbl oneColumnTble col_1">
+            <tr>
+                <td>
+                    myapl
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    myapl_dev1
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    myapl_dev2
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    myapl_dev3
+                </td>
+            </tr>
+        </table>
+        <table class="oneColumnTble col_2 movableTbl">
+            <tr>
+                <td>
+                    content
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    dev
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    itb
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    stage
+                </td>
+            </tr>
+        </table>
+        <table class="oneColumnTble col_3 movableTbl">
+            <tr>
+                <td>
+                    daichi
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    hiro
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    yoko
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    chika
+                </td>
+            </tr>
+        </table>
+        <table class="oneColumnTble col_4 movableTbl">
+            <tr>
+                <td>
+                    サイトリニューアル案件Ph8
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    DB更改
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    エントリー即時化対応Ph２
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    電子化対応_リカバリ自動化
+                </td>
+            </tr>
+        </table>
+    </main>
     <script type="text/javascript">
     /* 定数定義 */
     const JSFILE_DATA = "js/data.js";
@@ -241,8 +228,28 @@
 
     // data.js読み込み完了後にdynamicTableを生成する
     loadScript(JSFILE_DATA, function() {
-        logging('data.js', 'loading');
+        adjustTableWide();
+        adjustDataTableTop();
     });
+
+    function adjustDataTableTop() {
+        var topPosition = document.getElementsByClassName('theadTbl')[0].getBoundingClientRect().bottom + 'px';
+        logging('top', topPosition);
+        setStyle(document.documentElement, '--FixedTheadTblBottom_y', topPosition);
+    }
+
+    /**
+     * テーブルの横幅を調整する
+     */
+    function adjustTableWide() {
+        for (var i = 0; i < DATA_INS_NAMES.length; i++) {
+            var theadTbody = document.getElementsByClassName('col_' + i);
+            if (theadTbody.length === 0) break;
+            var width = Math.max(theadTbody[0].scrollWidth, theadTbody[1].scrollWidth) + 'px';
+            setStyle(theadTbody, 'width', width);
+            setStyle(document.documentElement, '--columnWidth_' + i, width);
+        }
+    }
 
     /**
      * srcの読み込みを待ってからcallbackを実行する
@@ -269,6 +276,25 @@
     }
 
     /**
+     * ターゲットに指定したスタイルを適用する
+     * ※ターゲットは配列も可
+     */
+    function setStyle(target, styleName, value) {
+        loggingObj('setStyle', target);
+        logging('maxWidth', value);
+        // ターゲットが配列の場合
+        if (Object.prototype.toString.call(target) === "[object HTMLCollection]") {
+            for (var e of target) {
+                e.style.setProperty(styleName, value);
+            }
+        }
+        // ターゲットが配列でない場合
+        else {
+            target.style.setProperty(styleName, value);
+        }
+    }
+
+    /**
      * ログUtil
      */
     function logging(processName, message) {
@@ -282,6 +308,6 @@
         console.log('[' + processName + '] ');
         console.dir(object);
     }
-
     </script>
+    <script type="text/javascript" src="js/movableColumn.js"></script>
 </body>
