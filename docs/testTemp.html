@@ -3,91 +3,226 @@
 
 <head>
     <style>
-        :root {
-            --baseColor: #363636; /* this color is dynamic set by javascript */
-            --baseColor_bg: #dddddd; /* this color is dynamic set by javascript */
-            --rightUpColor: #e6b2c0; /* this color is dynamic set by javascript */
-        }
+    :root {
+        --baseColor: #363636;
+        /* this color is dynamic set by javascript */
+        --baseColor_bg: #dddddd;
+        /* this color is dynamic set by javascript */
+        --rightUpColor: #e6b2c0;
+        /* this color is dynamic set by javascript */
+        --FixedColTblRight_x: 100px;
+        --FixedTheadTblBottom_y: 200px;
+        --columnWidth_0: 110px;
+        --columnWidth_1: 120px;
+        --columnWidth_2: 130px;
+        --columnWidth_3: 140px;
+        --columnWidth_4: 150px;
+        --columnWidth_5: 160px;
+    }
 
-        html {
-            color: var(--baseColor);
-            background: var(--baseColor_bg);
-        }
+    .oneColumnTble {
+        top : var(--FixedTheadTblBottom_y);
+    }
 
-        .dynamicTable * {
-      	display : block;
-  /*            border-collapse: separate;
-            border-spacing: 3px;
-*/        }
+    .col_0 {
+        left: var(--FixedColTblRight_x);
+    }
 
-        .dynamicTable th,
-        .dynamicTable td {
-            position : relative;
-            top : 0px;
-            left : 500px;
-            border-style: solid;
-            border-radius: 3px;
-        }
+    .col_1 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0));
+        top : var(--FixedTheadTblBottom_y);
+    }
 
-        .dynamicTable th {
-            background-color: #c79852;
-            color: white;
-            border: solid 1px #927141;
-            padding: 3px 0;
-            font-size: 1.1rem;
-            line-height: 1.2rem;
-        }
+    .col_2 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1));
+        top : var(--FixedTheadTblBottom_y);
+    }
 
-        .dynamicTable tr {
-            background-color: #e4d4bc;
-        }
-        .dynamicTable tr:nth-of-type(2n) {
-            background-color: #eaeae0;
-        }
+    .col_3 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2));
+        top : var(--FixedTheadTblBottom_y);
+    }
 
-        .dynamicTable td {
-            border: solid 1px #af9d85;
-            padding: 2px 0;
-            font-size: 0.9rem;
-        }
+    .col_4 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3));
+        top : var(--FixedTheadTblBottom_y);
+    }
+
+    .col_5 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4));
+        top : var(--FixedTheadTblBottom_y);
+    }
+
+    .col_6 {
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5));
+    }
+
+    .oneColumnTble {
+        position: absolute;
+        transition: 0.7s;
+    }
+
+    html {
+        color: var(--baseColor);
+        background: var(--baseColor_bg);
+    }
+
+    table {
+        position : absolute;
+    }
+
+    td,th {
+        border-style: solid;
+        padding: 0px 10px;
+        text-align : center;
+    }
+
+    .theadTbl {
+        position: fixed;
+        top: 10px;
+    }
+
+    .dynamicTable tr:nth-of-type(2n) {
+        background-color: #eaeae0;
+    }
+
     </style>
 </head>
-<body>
-	<br><br><br><br><br>
-	<table class="dynamicTable">
-		<thead>
-			<th class="th1">
-	Th1
-			</th>
-			<th class="th1">
-	Th2
-			</th>
-			<th class="th1">
-	Th3				
-			</th>
-		</thead>
-		<tbody>
-			<tr>
-				<td>TD1</td>
-				<td>TD2</td>
-				<td>TD3</td>
-			</tr>			
-			<tr>
-				<td>TD1</td>
-				<td>TD2</td>
-				<td>TD3</td>
-			</tr>			
-			<tr>
-				<td>TD1</td>
-				<td>TD2</td>
-				<td>TD3</td>
-			</tr>			
-			<tr>
-				<td>TD1</td>
-				<td>TD2</td>
-				<td>TD3</td>
-			</tr>			
-		</tbody>
-	</table>
 
+<body>
+    <table class="theadTbl col_0">
+        <th>
+            No
+        </th>
+    </table>
+    <table class="theadTbl col_1">
+        <th>
+            インスタンス名
+        </th>
+    </table>
+    <table class="theadTbl col_2">
+        <th>
+            DB向き先
+        </th>
+    </table>
+    <table class="theadTbl col_3">
+        <th>
+            環境予約者
+        </th>
+    </table>
+    <table class="theadTbl col_4">
+        <th>
+            案件名
+        </th>
+    </table>
+    <table class="fixTbl oneColumnTble col_0">
+        <tr>
+            <td>
+                1
+            </td>
+        </tr>
+        <tr>
+            <td>
+                2
+            </td>
+        </tr>
+        <tr>
+            <td>
+                3
+            </td>
+        </tr>
+        <tr>
+            <td>
+                4
+            </td>
+        </tr>
+    </table>
+    <table class="fixTbl oneColumnTble col_1">
+        <tr>
+            <td>
+                myapl
+            </td>
+        </tr>
+        <tr>
+            <td>
+                myapl_dev1
+            </td>
+        </tr>
+        <tr>
+            <td>
+                myapl_dev2
+            </td>
+        </tr>
+        <tr>
+            <td>
+                myapl_dev3
+            </td>
+        </tr>
+    </table>
+    <table class="oneColumnTble col_2 movableTbl">
+        <tr>
+            <td>
+                content
+            </td>
+        </tr>
+        <tr>
+            <td>
+                dev
+            </td>
+        </tr>
+        <tr>
+            <td>
+                itb
+            </td>
+        </tr>
+        <tr>
+            <td>
+                stage
+            </td>
+        </tr>
+    </table>
+    <table class="oneColumnTble col_3 movableTbl">
+        <tr>
+            <td>
+                daichi
+            </td>
+        </tr>
+        <tr>
+            <td>
+                hiro
+            </td>
+        </tr>
+        <tr>
+            <td>
+                yoko
+            </td>
+        </tr>
+        <tr>
+            <td>
+                chika
+            </td>
+        </tr>
+    </table>
+        <table class="oneColumnTble col_4 movableTbl">
+        <tr>
+            <td>
+                サイトリニューアル案件Ph8
+            </td>
+        </tr>
+        <tr>
+            <td>
+                DB更改
+            </td>
+        </tr>
+        <tr>
+            <td>
+                エントリー即時化対応Ph２
+            </td>
+        </tr>
+        <tr>
+            <td>
+                電子化対応_リカバリ自動化
+            </td>
+        </tr>
+    </table>
 </body>

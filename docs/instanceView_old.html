@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>InstanceView</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/movableColumn.css">
+    <link rel="stylesheet" type="text/css" href="css/lightUpCross.css">
+    <style id="columnTableX_0_style">
+        .columnTableX_0 {
+            left : calc( var(--FixedColTblRight_x));
+            transition: 0.7s;
+        }
+   </style>
+    <style id="columnTableX_1_style">
+        .columnTableX_1 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0));
+            transition: 0.7s;
+        }
+        .columnTableX_2 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1));
+            transition: 0.7s;
+        }
+        .columnTableX_3 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2));
+            transition: 0.7s;
+        }
+        .columnTableX_4 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3));
+            transition: 0.7s;
+        }
+        .columnTableX_5 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4));
+            transition: 0.7s;
+        }
+        .columnTableX_6 {
+            left : calc( var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5))
+            ;transition: 0.7s;
+        }
+    </style>
+    <style>
+        :root {
+            --baseColor: #363636; /* this color is dynamic set by javascript */
+            --baseColor_bg: #dddddd; /* this color is dynamic set by javascript */
+            --rightUpColor: #e6b2c0; /* this color is dynamic set by javascript */
+        }
+
+        html {
+            color: var(--baseColor);
+            background: var(--baseColor_bg);
+        }
+
+        .tableCommon {
+            border-collapse: separate;
+            border-spacing: 3px;
+            white-space: nowrap;
+            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
+        }
+
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .tableCommon th,
+        .tableCommon td {
+            border-style: solid;
+            border-radius: 3px;
+            text-align: center;
+/*            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
+*/        }
+
+        .fixedColumnTable {
+            position : fixed;
+            z-index:20;
+        }
+
+        .dynamicTable {
+            position : absolute;
+            padding : 10px;
+        }
+
+        .dynamicTable th {
+            position : fixed;
+            z-index:20;
+            top : var(--FixedColTblTop_y);
+        }
+
+        .dynamicTable tbody {
+/*            width: -moz-max-content;
+            width: -webkit-max-content;
+            width: max-content;
+*/        }
+
+        .oneColumnTable {
+            position : absolute;
+            top : var(--FixedColTblTop_y);
+        }
+
+        /* 動的テーブルの子孫thタグのスタイル指定 */
+        .tableCommon th {
+            background-color: #c79852;
+            color: white;
+            border: solid 1px #927141;
+            padding: 3px 6px;
+            font-size: 1.1rem;
+            line-height: 1.2rem;
+        }
+
+        /* 動的テーブルの子孫trタグのスタイル指定 */
+        .tableCommon tr {
+            background-color: #e4d4bc;
+        }
+        /* 動的テーブルの子孫trタグのスタイル指定(偶数行) */
+        .tableCommon tr:nth-of-type(2n) {
+            background-color: #eaeae0;
+        }
+
+        /* 動的テーブルの子孫tdタグのスタイル指定 */
+        .tableCommon td {
+            border: solid 1px #af9d85;
+            padding: 2px 10px;
+            font-size: 0.9rem;
+        }
+
+        .icon-column {
+            position: relative;
+            width: 15px;
+            height: 15px;
+            background: #bbb;
+            border-radius: 50%;
+            text-align: center;
+            margin: auto;
+        }
+
+        .icon-minus::before {
+            position: absolute;
+            top: calc(50% - 1px);
+            left: 50%;
+            content: '';
+            display: inline-block;
+            width: 60%;
+            height: 10%;
+            transform: translateX(-50%);
+        }
+
+        .icon-column.icon-minus::before {
+            border-top: 2px solid #fff;
+        }
+
+        .icon-menu.icon-minus::before {
+            border-top: 4px solid #333;
+        }
+
+        .icon-menu {
+            position : fixed;
+            width: 50px;
+            height: 50px;
+            right : 10px;
+            bottom : 10px;
+            background: #ccc;
+            border-radius: 50%;
+            margin: auto;
+            border: 5px solid #333;
+            z-index: 20;
+        }
+
+        .icon-plus::after {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: '';
+            display: inline-block;
+            width: 50%;
+            height: 50%;
+            border-top: 4px solid #333;
+            transform: translateX(-50%);
+        }
+
+        .icon-plus:after {
+            top: 25%;
+            left: 0;
+            transform: rotate(90deg);
+        }
+
+        .menu-window {
+            position : fixed;
+            right :20px;
+            bottom :20px;
+            width : 20vh;
+            height : 150px;
+            color : #fff;
+            background: #000;
+            border-radius: 7px;
+            z-index: 10;
+            transition : 1.2s;
+        }
+
+        .hidden, .hidden * {
+            /*display: none;*/
+            opacity : 0 !important;
+            height : 5px !important;
+            width : 0 !important;
+            font-size : 0 !important;
+            transition : 1.2s !important;
+        }
+
+        .debugContent:before {
+            position : absolute;
+            /*right : 0;*/
+            top : 0;
+            right : var(--test);
+        }
+    </style>
+    <div id="style_writtenByJavascript">
+    </div>
+</head>
+
+<body>
+    <main>
+        <div id="fixedColumnTable" class="tableCommon fixedColumnTable"></div>
+        <div id="dynamicTable" class="tableCommon dynamicTable"></div>
+        <div id="menu-button" class="icon-menu icon-plus icon-minus"></div>
+        <div id="menu-window" class="menu-window hidden">
+            <ul id="unvealColumnList">
+            </ul>
+        </div>
+    </main>
+    <script type="text/javascript">
+    const FIX_COLUMN_NO = "No";
+    const FIX_COLUMN_INS = "インスタンス名";
+
+    const JSFILE_DATA = "js/data.js";
+    const JSFILE_MOVABLE_COLMN = "js/movableColumn.js";
+    const JSFILE_LIGHTUP_CROSS = "js/lightUpCross.js";
+    const JSFILE_HIDE_COLUMN = "js/hideColumn.js";
+    const JSFILE_UNVEAL_COLUMN = "js/menu_unvealCoulumn.js";
+
+    /* 定数定義 */
+    const STORAGE_KEY_HIDDEN_COULUMNS = 'hiddenColumns';
+    const STORAGE_KEY_TBL_KEYS_DISP_ORDER = 'tableKeysForDispOrder';
+
+    // data.js読み込み完了後にdynamicTableを生成する
+    loadScript(JSFILE_DATA, function() {
+        const INSTANCE_NAMES = Object.keys(INSTANCES_INFO);
+        const DYNAMIC_COLUMN_NAMES = Object.keys(INSTANCES_INFO[Object.keys(INSTANCES_INFO)[0]]);
+        var tableKeysForDispOrder = decideTableKeysDispOrder();
+        var hiddenColumns = getHiddenColumnsArrayFrmLocStrg();
+
+        buildTable(tableKeysForDispOrder, hiddenColumns);
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_MOVABLE_COLMN, function() {
+            // this function is in movableColumn.js
+            moveColumnEventListenr();
+        });
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_LIGHTUP_CROSS, function() {
+            // this function is in lightUpCross.js
+            lightUpCrossEventListener();
+        });
+
+        // dynamicTableにイベントリスナーを付与するため、必ずdynamicTable生成完了後に実施する必要がある
+        loadScript(JSFILE_HIDE_COLUMN, function() {
+            // this function is in hideColumn.js
+            hideColumnEventListener();
+        });
+
+        /**
+         * 
+         */
+        function decideTableKeysDispOrder() {
+            var locStrgArray = getTableKeysForDispOrderArrayFrmLocalStorage();
+
+            // localStorageの値が妥当な場合
+            if (isCorrectTableKeys(locStrgArray)) {
+                // ローカルストレージの値を返す
+                return locStrgArray;
+            }
+            // localStorageの値が妥当でない場合
+            else {
+                // 現在のデータ値からキー値を取得する
+                var tableKeysForDispOrder_current = Object.keys(INSTANCES_INFO[Object.keys(INSTANCES_INFO)[0]]);
+                // ローカルストレージを更新する
+                localStorage.setItem(STORAGE_KEY_TBL_KEYS_DISP_ORDER, tableKeysForDispOrder_current);
+                return tableKeysForDispOrder_current;
+            }
+        }
+
+        /**
+         * テーブルキー配列が妥当か現在の値を元に判定する
+         */
+        function isCorrectTableKeys(tableKeysForDispOrder) {
+            // 妥当と判定した回数
+            var correctCount = 0;
+
+            // ローカルストレージから取得した配列を元に繰り返し処理
+            for (index in tableKeysForDispOrder) {
+                // ローカルストレージのキー値が現在のキー配列に存在する場合
+                if (DYNAMIC_COLUMN_NAMES.indexOf(tableKeysForDispOrder[index]) >= 0) {
+                    // チェック状態管理用フラグを1つ立てる
+                    ++correctCount;
+                } else {
+                    console.log('[isCorrectTableKeys] false : A');
+                    return false;
+                }
+            }
+            // 妥当と判定した回数が現在のキー配列長と一致しない場合
+            if (DYNAMIC_COLUMN_NAMES.length != correctCount) {
+                console.log('[isCorrectTableKeys] false : B');
+                return false;
+            }
+            console.log('[isCorrectTableKeys] true');
+            return true;
+        }
+
+        function buildTable(tableKeysForDispOrder, hiddenColumns) {
+            var column_index = 0;
+            buildFixedColumnTable();
+            DYNAMIC_COLUMN_NAMES.map(columnName => buildDynamicColumnTable(column_index++, columnName));
+            setProperty_fixedColTblPosition();
+        }
+
+        function buildFixedColumnTable() {
+            var tableHtml = '<table><thead><tr><th>' + FIX_COLUMN_NO + '</th><th>' + FIX_COLUMN_INS + '</th></tr></thead><tbody>';
+            var no = 0;
+
+            INSTANCE_NAMES.map(
+                instanceName => {
+                    tableHtml = tableHtml + '<tr><td>' + ++no + '</td><td>' + instanceName + '</td></tr>';
+                }
+            );
+
+            tableHtml = tableHtml + '</tbody></table>';
+            document.getElementById('fixedColumnTable').insertAdjacentHTML('beforeend', tableHtml);
+        }
+
+        function buildDynamicColumnTable(column_index, columnName) {
+            var targetId = 'columnTableX_' + column_index;
+            var tableHtml = '<table id="' + targetId + '" class="oneColumnTable ' + targetId + '"><thead><tr><th>' + columnName + '</th></tr></thead><tbody>';
+            var instanceNames = Object.keys(INSTANCES_INFO);
+
+            for (index in instanceNames) {
+                tableHtml = tableHtml + '<tr><td>' + getInstanceInfo(instanceNames[index], columnName) + '</td></tr>';
+            }
+
+            tableHtml = tableHtml + '</tbody></table>';
+            document.getElementById('dynamicTable').insertAdjacentHTML('beforeend', tableHtml);
+            beSameWidthThAndTd(targetId);
+            calcColumnPosition(column_index, document.getElementById(targetId).scrollWidth);
+        }
+
+        /**
+         * キー名(第2引数)が配列（第1引数）に存在する場合は' hidden'の文字列を返す
+         */
+        function getIfHidden(hiddenColumns, targetKey) {
+            // 存在しない場合 : 空文字を返す
+            // 存在する場合 : ' hidden'を返す
+            return (hiddenColumns.indexOf(targetKey) == -1) ? '' : ' hidden';
+        }
+
+        function beSameWidthThAndTd(targetId) {
+            var targetTable = document.getElementById(targetId);
+            logging('beSameWidthThAndTd : ' + targetId + ' thead', + 
+                    targetTable.getElementsByTagName('th')[0].scrollWidth  + 'px');
+            logging('beSameWidthThAndTd : ' + targetId + ' tbody', + Math.max(
+                    targetTable.getElementsByTagName('tbody')[0].scrollWidth) + 'px');
+            var maxWidth = Math.max(
+                    targetTable.getElementsByTagName('th')[0].scrollWidth,
+                    targetTable.getElementsByTagName('tbody')[0].scrollWidth) + 'px';
+            targetTable.getElementsByTagName('th')[0].style.setProperty('width', maxWidth);
+            targetTable.style.setProperty('width', maxWidth);
+        }
+
+        function calcColumnPosition(column_index, column_width) {
+            var target_id = 'columnTableX_' + column_index;
+            var target_style_id = target_id + '_style';
+
+            var leftPositionFormula = 'left : calc( var(--FixedColTblRight_x)';
+
+            for (var i = 0; i < column_index; i++) {
+                leftPositionFormula = leftPositionFormula + ' + var(--columnWidth_' + i + ')';
+            }
+            document.documentElement.style.setProperty('--columnWidth_' + column_index, column_width + "px");
+        }
+    });
+
+    /**
+     * srcの読み込みを待ってからcallbackを実行する
+     */
+    function loadScript(src, callback) {
+        var done = false;
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.src = src;
+        head.appendChild(script);
+        // Attach handlers for all browsers
+        script.onload = script.onreadystatechange = function() {
+            if (!done && (!this.readyState ||
+                    this.readyState === "loaded" || this.readyState === "complete")) {
+                done = true;
+                callback();
+                // Handle memory leak in IE
+                script.onload = script.onreadystatechange = null;
+                if (head && script.parentNode) {
+                    head.removeChild(script);
+                }
+            }
+        };
+    }
+
+    /**
+     * 指定されたキー名のローカルストレージを取得する
+     * ※無い場合は空文字を返す
+     */
+    function getLocalStorageAsArray(storageKey) {
+        var locStrgString = localStorage.getItem(storageKey);
+        console.log('[getLocalStorageAsArray] ' + storageKey + ' : ' + locStrgString);
+        // ローカルストレージに値が有る場合 : カンマ区切りで配列化して返す
+        // ローカルストレージに値が無い場合 : 空文字で返す
+        return (locStrgString) ? locStrgString.split(',') : [];
+    }
+
+    /**
+     * 表示順決定用ローカルキー配列をローカルストレージより取得する
+     */
+    function getInstanceInfo(instanceName, columnName) {
+        return INSTANCES_INFO[instanceName][columnName];
+    }
+
+    /**
+     * 表示順決定用ローカルキー配列をローカルストレージより取得する
+     */
+    function getTableKeysForDispOrderArrayFrmLocalStorage() {
+        return getLocalStorageAsArray(STORAGE_KEY_TBL_KEYS_DISP_ORDER);
+    }
+
+    /**
+     * 非表示カラム配列をローカルストレージより取得する
+     */
+    function getHiddenColumnsArrayFrmLocStrg() {
+        return getLocalStorageAsArray(STORAGE_KEY_HIDDEN_COULUMNS);
+    }
+
+    /**
+     * ログUtil
+     */
+    function logging(processName, message) {
+        console.log('[' + processName + '] ' + message);
+    }
+
+    /**
+     * ログUtil(オブジェクトの内容出力)
+     */
+    function loggingObj(processName, object) {
+        console.log('[' + processName + '] ');
+        console.dir(object);
+    }
+
+    /** 
+     * fixedColumnTableの
+     */
+    function setProperty_fixedColTblPosition() {
+        var rect = document.getElementById('fixedColumnTable').getBoundingClientRect();
+        document.documentElement.style.setProperty('--FixedColTblRight_x', rect.right + "px");
+        document.documentElement.style.setProperty('--FixedColTblTop_y', rect.top + "px");
+    }
+    </script>
+    <script type="text/javascript" src="js/movableColumn.js"></script>
+    <script type="text/javascript" src="js/lightUpCross.js"></script>
+    <script type="text/javascript" src="js/hideColumn.js"></script>
+    <script type="text/javascript" src="js/menu.js"></script>
+    <script type="text/javascript" src="js/menu_unvealCoulumn.js"></script>
+</body>
+
+</html>
