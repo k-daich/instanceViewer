@@ -11,6 +11,13 @@
         --rightUpColor: #e6b2c0;
         /* this color is dynamic set by javascript */
         --FixedColTblRight_x: 10px;
+        --Drag_x_0: 0px;
+        --Drag_x_1: 0px;
+        --Drag_x_2: 0px;
+        --Drag_x_3: 0px;
+        --Drag_x_4: 0px;
+        --Drag_x_5: 0px;
+        --Drag_x_6: 0px;
     }
 
     .oneColumnTble {
@@ -18,36 +25,36 @@
     }
 
     .col_0 {
-        left: var(--FixedColTblRight_x);
+        left: calc(var(--FixedColTblRight_x) + var(--Drag_x_0));
     }
 
     .col_1 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--Drag_x_1));
         top : var(--FixedTheadTblBottom_y);
     }
 
     .col_2 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--Drag_x_2));
         top : var(--FixedTheadTblBottom_y);
     }
 
     .col_3 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--Drag_x_3));
         top : var(--FixedTheadTblBottom_y);
     }
 
     .col_4 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--Drag_x_4));
         top : var(--FixedTheadTblBottom_y);
     }
 
     .col_5 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--Drag_x_5));
         top : var(--FixedTheadTblBottom_y);
     }
 
     .col_6 {
-        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5));
+        left: calc(var(--FixedColTblRight_x) + var(--columnWidth_0) + var(--columnWidth_1) + var(--columnWidth_2) + var(--columnWidth_3) + var(--columnWidth_4) + var(--columnWidth_5) + var(--Drag_x_6));
     }
 
     .oneColumnTble {
@@ -223,6 +230,7 @@
     <script type="text/javascript">
     /* 定数定義 */
     const JSFILE_DATA = "js/data.js";
+    const JSFILE_MV_COLUMN = "js/movableColumn.js";
     const STORAGE_KEY_HIDDEN_COULUMNS = 'hiddenColumns';
     const STORAGE_KEY_TBL_KEYS_DISP_ORDER = 'tableKeysForDispOrder';
 
@@ -230,11 +238,13 @@
     loadScript(JSFILE_DATA, function() {
         adjustTableWide();
         adjustDataTableTop();
+        // movableColumn.jsを読みこむ
+        loadScript(JSFILE_MV_COLUMN, function(){});
     });
 
     function adjustDataTableTop() {
         var topPosition = document.getElementsByClassName('theadTbl')[0].getBoundingClientRect().bottom + 'px';
-        logging('top', topPosition);
+        // logging('top', topPosition);
         setStyle(document.documentElement, '--FixedTheadTblBottom_y', topPosition);
     }
 
@@ -280,8 +290,8 @@
      * ※ターゲットは配列も可
      */
     function setStyle(target, styleName, value) {
-        loggingObj('setStyle', target);
-        logging('maxWidth', value);
+        // loggingObj('setStyle', target);
+        // logging('maxWidth', value);
         // ターゲットが配列の場合
         if (Object.prototype.toString.call(target) === "[object HTMLCollection]") {
             for (var e of target) {
@@ -309,5 +319,4 @@
         console.dir(object);
     }
     </script>
-    <script type="text/javascript" src="js/movableColumn.js"></script>
 </body>
