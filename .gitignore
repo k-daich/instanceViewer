@@ -1,2 +1,2 @@
-app/src/target/*
-logs/*
+app/target/*
+app/logs/*
