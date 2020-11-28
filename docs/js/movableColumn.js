@@ -26,7 +26,7 @@ function moveColumnEventListenr() {
 
 // マウスダウンした時に発火
 function mdown(event) {
-    logging('mdown');
+    logging('----------------------------------------- mdown -----------------------------------------');
     loggingObj('mdown this', this);
     // クラス名に .drag を追加
     this.thisEle.classList.add("drag");
@@ -34,7 +34,7 @@ function mdown(event) {
     logging('event.pageX', event.pageX);
     logging('this.thisEle.offsetLeft', this.thisEle.offsetLeft);
     // 要素内の相対座標を取得
-    movableColumn.x = event.pageX - this.thisEle.offsetLeft;
+    movableColumn.x = event.pageX;
 
     // ムーブイベントにコールバック
     document.body.addEventListener("mousemove", { id: this.id, thisEle: this.thisEle, handleEvent: mmove }, false);
@@ -42,24 +42,30 @@ function mdown(event) {
 
 // マウスカーソルが動いたときに発火
 function mmove(event) {
+	logging('----------------------------------------- mmove -----------------------------------------');
     var index = movableColumn.dispOrder_ids.indexOf(this.id);
     var thisColumn = movableColumn.elements[index];
-    logging('mmove');
     logging('movableColumn.x', movableColumn.x);
+    logging('event.pageX' , event.pageX);
     loggingObj('movableColumn.elements', movableColumn.elements);
     loggingObj('mmove this', this);
 
     // ドラッグしたX座標が左隣の列中央より左に移動した場合
-    if (movableColumn.x < 0 && index != 0) {
+    if (event.pageX < movableColumn.x && index != 0) {
+    	logging('movableColumn.elements[index + 1]', movableColumn.elements[index + 1]);
         var leftColumn = movableColumn.elements[index - 1];
+        logging('leftColumn', leftColumn);
         logging('left event.pageX', event.pageX);
         logging('LeftRect() left:right', leftColumn.getBoundingClientRect().left + ':' + leftColumn.getBoundingClientRect().right);
         if (event.pageX - movableColumn.x < (leftColumn.getBoundingClientRect().left + leftColumn.getBoundingClientRect().right) / 2) {
             leftColumn.classList.replace('col_' + (index - 1), 'col_' + index);
             thisColumn.classList.replace('col_' + index, 'col_' + (index - 1));
         }
-    } else if (movableColumn.x > 0 && index != movableColumn.elements.length) {
+    } else if (event.pageX > movableColumn.x && index != movableColumn.elements.length) {
         var rightColumn = movableColumn.elements[index + 1];
+    	loggingObj('movableColumn.elements[index + 1]', movableColumn.elements[index + 1]);
+    	loggingObj('movableColumn.elements[index + 1]', movableColumn.elements[index - 1]);
+        logging('rightColumn', rightColumn);
         logging('right event.pageX', event.pageX);
         logging('RightRect() left:right', rightColumn.getBoundingClientRect().left + ':' + rightColumn.getBoundingClientRect().right);
         // ドラッグしたX座標が右隣の列中央より右に移動した場合
@@ -69,9 +75,6 @@ function mmove(event) {
         }
     }
 
-    // マウスが動いた場所に要素を動かす
-    // drag.style.left = (event.pageX - x) + 'px';
-
     // マウスボタンが離されたとき、またはカーソルが外れたとき発火
     thisColumn.addEventListener("mouseup", mup, false);
     document.body.addEventListener("mouseleave", mup, false);
@@ -79,8 +82,9 @@ function mmove(event) {
 
 // マウスボタンが上がったら発火
 function mup(event) {
-    logging('mup');
+    loggingMark('mup');
     var drag = document.getElementsByClassName("drag")[0];
+    loggingObj('drag', drag);
 
     // ムーブベントハンドラの消去
     document.body.removeEventListener("mousemove", mmove, false);

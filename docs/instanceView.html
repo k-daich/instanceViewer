@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <title>InstanceView</title>
     <style>
         :root {
         --baseColor: #363636;
@@ -309,6 +310,14 @@
      */
     function logging(processName, message) {
         console.log('[' + processName + '] ' + message);
+    }
+
+    var loggingMarkCount = 0;
+    /**
+     * ログUtil(目立つラインをつけて目印にする)
+     */
+    function loggingMark(message) {
+        console.log(++loggingMarkCount + '----------------------------------------- ' + message + ' ----------------------------------------- ');
     }
 
     /**
